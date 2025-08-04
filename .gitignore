@@ -1,0 +1,14 @@
+# Root
+.env
+
+# Node
+node_modules/
+dist/
+
+# React
+client/node_modules/
+client/build/
+client/.env
+
+# Logs
+*.log
