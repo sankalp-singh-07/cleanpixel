@@ -6,3 +6,8 @@ export const UserSignUp = z.object({
 	email: z.email(),
 	password: z.string().min(6, 'Minimum length for password is 6'),
 });
+
+export const UserLogin = z.object({
+	email: z.email(),
+	password: z.string().min(6, 'Minimum length for password is 6'),
+});

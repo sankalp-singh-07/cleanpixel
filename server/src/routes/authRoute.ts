@@ -1,19 +1,48 @@
 import express from 'express';
-import { UserSignUp } from '../types/userType.js';
+import { UserLogin, UserSignUp } from '../types/userType.js';
 import bcrypt from 'bcrypt';
+import { createUser, findUser } from '../lib/prisma.js';
 const authRoute = express.Router();
 
-authRoute.post('/login', (req, res) => {
-	const { user } = req.body;
+authRoute.post('/login', async (req, res) => {
+	try {
+		const { user } = req.body;
 
-	if (!user) {
-		return res.status(404).json({
-			message: 'User Details Not found',
+		if (!user) {
+			return res.status(400).json({ message: 'User details not found' });
+		}
+
+		const parseUser = UserLogin.safeParse(user);
+		if (!parseUser.success) {
+			return res
+				.status(422)
+				.json({ message: 'Invalid format for user details' });
+		}
+
+		const { email, password } = parseUser.data;
+
+		const userFound = await findUser(email);
+
+		if (!userFound) {
+			return res
+				.status(401)
+				.json({ message: 'Invalid email or password' });
+		}
+
+		const isMatch = await bcrypt.compare(password, userFound.password);
+		if (!isMatch) {
+			return res
+				.status(401)
+				.json({ message: 'Invalid email or password' });
+		}
+
+		res.status(200).json({
+			message: 'User fetched successful',
 		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: 'Something went wrong', error });
 	}
-	const { email, password } = user;
-
-	res.send('Login here');
 });
 
 authRoute.post('/signup', async (req, res) => {
@@ -21,33 +50,35 @@ authRoute.post('/signup', async (req, res) => {
 		const { user } = req.body;
 
 		if (!user) {
-			return res.status(404).json({
-				message: 'User details not found',
-			});
+			return res.status(400).json({ message: 'User details not found' });
 		}
 
 		const parsedUser = UserSignUp.safeParse(user);
-
 		if (!parsedUser.success) {
-			return res.status(406).json({
-				message: 'Not valid format user details',
-			});
+			return res
+				.status(422)
+				.json({ message: 'Invalid format for user details' });
 		}
 
-		const { username, name, email, password } = user;
+		const { username, name, email, password } = parsedUser.data;
 
-		if (!username || !name || !email || !password)
-			return res.status(404).json({
-				message: 'Missing details',
-			});
+		const existingUser = await findUser(email);
+		if (existingUser) {
+			return res
+				.status(409)
+				.json({ message: 'Email already registered' });
+		}
 
-		const hashedPassword = await bcrypt.hash(password, 7);
+		const hashedPassword = await bcrypt.hash(password, 10);
+		const newUser = await createUser(username, name, email, hashedPassword);
 
-		res.send('signup here');
-	} catch (error) {
-		res.status(400).json({
-			message: error,
+		res.status(201).json({
+			message: 'User created successfully',
+			user: newUser,
 		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: 'Signup failed', error });
 	}
 });
 
