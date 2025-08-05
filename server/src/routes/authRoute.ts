@@ -2,6 +2,7 @@ import express from 'express';
 import { UserLogin, UserSignUp } from '../types/userType.js';
 import bcrypt from 'bcrypt';
 import { createUser, findUser } from '../lib/prisma.js';
+import { createAccessToken, createRefreshToken } from '../utils/jwt.js';
 const authRoute = express.Router();
 
 authRoute.post('/login', async (req, res) => {
@@ -36,10 +37,26 @@ authRoute.post('/login', async (req, res) => {
 				.json({ message: 'Invalid email or password' });
 		}
 
-		res.status(200).json({
-			message: 'User fetched successful',
-			userFound,
-		});
+		const accessToken = await createAccessToken(userFound.id);
+		const refreshToken = await createRefreshToken(userFound.id);
+
+		res.cookie('token', refreshToken, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'strict',
+			maxAge: 14 * 24 * 60 * 60 * 1000,
+		})
+			.status(200)
+			.json({
+				message: 'User fetched successful',
+				accessToken,
+				user: {
+					id: userFound.id,
+					email: userFound.email,
+					username: userFound.username,
+					name: userFound.name,
+				},
+			});
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Something went wrong', error });
