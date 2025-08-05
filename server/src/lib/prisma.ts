@@ -36,3 +36,11 @@ export const findUser = async (email?: string, username?: string) => {
 		throw error;
 	}
 };
+
+export const getUserById = async (id: string) => {
+	try {
+		return await client.user.findUnique({ where: { id } });
+	} catch (error) {
+		throw error;
+	}
+};

@@ -1,8 +1,9 @@
 import express from 'express';
 import { UserLogin, UserSignUp } from '../types/userType.js';
 import bcrypt from 'bcrypt';
-import { createUser, findUser } from '../lib/prisma.js';
+import { createUser, findUser, getUserById } from '../lib/prisma.js';
 import { createAccessToken, createRefreshToken } from '../utils/jwt.js';
+import { verifyAccessTokenMiddleware } from '../middlewares/verifyTokenMiddleware.js';
 const authRoute = express.Router();
 
 authRoute.post('/login', async (req, res) => {
@@ -37,10 +38,10 @@ authRoute.post('/login', async (req, res) => {
 				.json({ message: 'Invalid email or password' });
 		}
 
-		const accessToken = await createAccessToken(userFound.id);
-		const refreshToken = await createRefreshToken(userFound.id);
+		const accessToken = createAccessToken(userFound.id);
+		const refreshToken = createRefreshToken(userFound.id);
 
-		res.cookie('token', refreshToken, {
+		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',
 			sameSite: 'strict',
@@ -100,4 +101,31 @@ authRoute.post('/signup', async (req, res) => {
 	}
 });
 
-export default authRoute;
+authRoute.get('/me', verifyAccessTokenMiddleware, async (req, res) => {
+	try {
+		const userId = req.userId;
+
+		if (!userId) {
+			return res.status(401).json({ message: 'Unauthorized access' });
+		}
+
+		const userFound = await getUserById(userId);
+
+		if (!userFound) {
+			return res.status(404).json({ message: 'User not found' });
+		}
+
+		res.status(200).json({
+			message: 'User found',
+			user: {
+				id: userFound.id,
+				email: userFound.email,
+				username: userFound.username,
+				name: userFound.name,
+			},
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: 'Internal server error', error });
+	}
+});
