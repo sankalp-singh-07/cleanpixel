@@ -23,12 +23,15 @@ export const createUser = async (
 	}
 };
 
-export const findUser = async (email: string) => {
+export const findUser = async (email?: string, username?: string) => {
 	try {
-		const user = await client.user.findUnique({
-			where: { email },
-		});
-		return user;
+		if (email) {
+			return await client.user.findUnique({ where: { email } });
+		}
+		if (username) {
+			return await client.user.findUnique({ where: { username } });
+		}
+		throw new Error('No identifier provided to find user');
 	} catch (error) {
 		throw error;
 	}

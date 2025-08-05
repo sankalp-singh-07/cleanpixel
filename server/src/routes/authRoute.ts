@@ -38,6 +38,7 @@ authRoute.post('/login', async (req, res) => {
 
 		res.status(200).json({
 			message: 'User fetched successful',
+			userFound,
 		});
 	} catch (error) {
 		console.error(error);
@@ -62,11 +63,11 @@ authRoute.post('/signup', async (req, res) => {
 
 		const { username, name, email, password } = parsedUser.data;
 
-		const existingUser = await findUser(email);
-		if (existingUser) {
-			return res
-				.status(409)
-				.json({ message: 'Email already registered' });
+		const existingByEmail = await findUser(email);
+		const existingByUsername = await findUser(undefined, username);
+
+		if (existingByEmail || existingByUsername) {
+			return res.status(409).json({ message: 'User already registered' });
 		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
@@ -74,7 +75,7 @@ authRoute.post('/signup', async (req, res) => {
 
 		res.status(201).json({
 			message: 'User created successfully',
-			user: newUser,
+			user: { id: newUser.id, email: newUser.email },
 		});
 	} catch (error) {
 		console.error(error);
