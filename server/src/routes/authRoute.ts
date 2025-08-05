@@ -25,7 +25,8 @@ authRoute.post('/login', async (req, res) => {
 				.json({ message: 'Invalid format for user details' });
 		}
 
-		const { email, password } = parseUser.data;
+		const email = parseUser.data.email.toLowerCase();
+		const password = parseUser.data.password;
 
 		const userFound = await findUser(email);
 
@@ -83,7 +84,9 @@ authRoute.post('/signup', async (req, res) => {
 				.json({ message: 'Invalid format for user details' });
 		}
 
-		const { username, name, email, password } = parsedUser.data;
+		const email = parsedUser.data.email.toLowerCase();
+		const username = parsedUser.data.username.toLowerCase();
+		const { name, password } = parsedUser.data;
 
 		const existingByEmail = await findUser(email);
 		const existingByUsername = await findUser(undefined, username);
