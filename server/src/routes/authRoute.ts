@@ -2,7 +2,11 @@ import express from 'express';
 import { UserLogin, UserSignUp } from '../types/userType.js';
 import bcrypt from 'bcrypt';
 import { createUser, findUser, getUserById } from '../lib/prisma.js';
-import { createAccessToken, createRefreshToken } from '../utils/jwt.js';
+import {
+	createAccessToken,
+	createRefreshToken,
+	verifyRefreshToken,
+} from '../utils/jwt.js';
 import { verifyAccessTokenMiddleware } from '../middlewares/verifyTokenMiddleware.js';
 const authRoute = express.Router();
 
@@ -128,4 +132,39 @@ authRoute.get('/me', verifyAccessTokenMiddleware, async (req, res) => {
 		console.error(error);
 		res.status(500).json({ message: 'Internal server error', error });
 	}
+});
+
+authRoute.get('/refresh', (req, res) => {
+	try {
+		const token = req.cookies.refreshToken;
+
+		if (!token) {
+			return res.status(401).json({ message: 'Refresh token missing' });
+		}
+
+		const payload = verifyRefreshToken(token) as { id: string };
+		if (!payload || !payload.id) {
+			return res.status(403).json({ message: 'Invalid refresh token' });
+		}
+
+		const newAccessToken = createAccessToken(payload.id);
+
+		return res.status(200).json({
+			message: 'Token refreshed',
+			accessToken: newAccessToken,
+		});
+	} catch (error) {
+		return res
+			.status(401)
+			.json({ message: 'Invalid or expired refresh token' });
+	}
+});
+
+authRoute.post('/logout', (req, res) => {
+	res.clearCookie('refreshToken', {
+		httpOnly: true,
+		sameSite: 'strict',
+		secure: process.env.NODE_ENV === 'production',
+	});
+	res.status(200).json({ message: 'User logged out successfully' });
 });
