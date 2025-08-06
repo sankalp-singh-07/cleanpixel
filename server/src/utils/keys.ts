@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 if (
 	!process.env.JWT_ACCESS_TOKEN_SECRET ||
 	!process.env.JWT_REFRESH_TOKEN_SECRET
