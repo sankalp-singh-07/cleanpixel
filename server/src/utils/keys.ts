@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import { v2 as cloudinary } from 'cloudinary';
+
 if (
 	!process.env.JWT_ACCESS_TOKEN_SECRET ||
 	!process.env.JWT_REFRESH_TOKEN_SECRET
@@ -10,3 +12,11 @@ if (
 
 export const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET!;
 export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_TOKEN_SECRET!;
+
+cloudinary.config({
+	cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+	api_key: process.env.CLOUDINARY_API_KEY!,
+	api_secret: process.env.CLOUDINARY_API_SECRET!,
+});
+
+export { cloudinary };
