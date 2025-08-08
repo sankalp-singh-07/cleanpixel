@@ -112,3 +112,29 @@ export const fetchGallery = async (
 
 	return result;
 };
+
+export const deductCredit = async (userId: string) => {
+	const result = await client.user.update({
+		where: {
+			id: userId,
+		},
+		data: {
+			credits: { decrement: 1 },
+		},
+	});
+	return result;
+};
+
+export const getCredits = async (userId: string) => {
+	const data = await client.user.findUnique({
+		where: {
+			id: userId,
+		},
+	});
+
+	const credits = data?.credits;
+
+	if (credits === null || credits === undefined) return false;
+
+	return credits > 0;
+};

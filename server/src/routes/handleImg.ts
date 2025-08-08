@@ -3,8 +3,10 @@ import { upload } from '../middlewares/multer';
 import { verifyAccessTokenMiddleware } from '../middlewares/verifyTokenMiddleware';
 import { cloudinary } from '../utils/keys';
 import {
+	deductCredit,
 	fetchGallery,
 	fetchOgImg,
+	getCredits,
 	updateRemovedBgImg,
 	userImageUpload,
 } from '../lib/prisma';
@@ -57,7 +59,15 @@ handleImg.post(
 				return res.status(400).json({ message: 'No user found' });
 			}
 
+			const credits = await getCredits(userId);
+
+			if (!credits)
+				return res
+					.status(402)
+					.json({ message: 'Insufficient credits' });
+
 			const imgUrl = await fetchOgImg(id);
+
 			if (!imgUrl) {
 				return res.status(400).json({ message: 'No image found' });
 			}
@@ -75,6 +85,8 @@ handleImg.post(
 			fs.unlinkSync(filePath);
 
 			const imgDb = await updateRemovedBgImg(img.secure_url, id, userId);
+
+			await deductCredit(userId);
 
 			res.status(200).json({
 				message: 'No Bg Image created and uploaded successfully',
