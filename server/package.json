@@ -18,7 +18,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
     "bcrypt": "^6.0.0",
-    "cloudinary": "^2.7.0",
+    "cloudinary": "^1.41.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
@@ -27,6 +27,7 @@
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "typescript": "^5.9.2",
+    "uuid": "^11.1.0",
     "zod": "^4.0.14"
   },
   "devDependencies": {
