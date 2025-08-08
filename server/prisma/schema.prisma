@@ -14,6 +14,7 @@ model User {
   username  String      @unique
   password  String
   name      String
+  credits   Int         @default(5)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @default(now()) @updatedAt
   UserImage UserImage[]
