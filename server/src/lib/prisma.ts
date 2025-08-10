@@ -157,3 +157,37 @@ export const addCredits = async (userId: string, credits: number) => {
 		data: { credits: { increment: credits } },
 	});
 };
+
+export const createOrder = async (
+	userId: string,
+	credits: number,
+	plan: string,
+	amount: number,
+	razorpayOrderId: string
+) => {
+	return await client.payments.create({
+		data: {
+			userId,
+			credits,
+			plan,
+			amount,
+			razorpayOrderId,
+		},
+	});
+};
+
+export const updateOrderStatus = async (razorpayOrderId: string) => {
+	return await client.payments.updateMany({
+		where: { razorpayOrderId },
+		data: { status: true },
+	});
+};
+
+export const findPaymentrecord = async (
+	razorpayOrderId: string,
+	userId: string
+) => {
+	return await client.payments.findFirst({
+		where: { razorpayOrderId, userId },
+	});
+};
