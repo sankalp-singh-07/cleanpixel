@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { cloudinary } from '../utils/keys';
 import {
+	checkCredits,
 	deductCredit,
 	fetchGallery,
 	fetchOgImg,
-	getCredits,
 	updateRemovedBgImg,
 	userImageUpload,
 } from '../lib/prisma';
@@ -57,7 +57,7 @@ export const removeImageController = async (req: Request, res: Response) => {
 		if (!validateId(userId) || !validateId(id))
 			return res.status(400).json({ message: 'Wrong id' });
 
-		const credits = await getCredits(userId);
+		const credits = await checkCredits(userId);
 
 		if (!credits)
 			return res.status(402).json({ message: 'Insufficient credits' });

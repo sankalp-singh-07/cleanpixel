@@ -125,7 +125,7 @@ export const deductCredit = async (userId: string) => {
 	return result;
 };
 
-export const getCredits = async (userId: string) => {
+export const checkCredits = async (userId: string) => {
 	const data = await client.user.findUnique({
 		where: {
 			id: userId,
@@ -137,4 +137,16 @@ export const getCredits = async (userId: string) => {
 	if (credits === null || credits === undefined) return false;
 
 	return credits > 0;
+};
+
+export const getCredits = async (userId: string) => {
+	const data = await client.user.findUnique({
+		where: {
+			id: userId,
+		},
+	});
+
+	const credits = data?.credits;
+
+	return credits;
 };
