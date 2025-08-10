@@ -150,3 +150,10 @@ export const getCredits = async (userId: string) => {
 
 	return credits;
 };
+
+export const addCredits = async (userId: string, credits: number) => {
+	return await client.user.update({
+		where: { id: userId },
+		data: { credits: { increment: credits } },
+	});
+};
