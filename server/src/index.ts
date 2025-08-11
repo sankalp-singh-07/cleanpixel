@@ -3,9 +3,11 @@ import authRoute from './routes/authRoute.js';
 import handleImg from './routes/handleImg.js';
 import paymentRoute from './routes/paymentRoute.js';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 const PORT = 3000;
 
