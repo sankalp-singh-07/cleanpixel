@@ -1,10 +1,10 @@
 import './App.css';
+import MainRoutes from './routes/MainRoutes';
 
 function App() {
 	return (
 		<>
-			<h1 className="text-4xl">Hello world</h1>
-			<p className="text-2xl">React + node app</p>
+			<MainRoutes />
 		</>
 	);
 }
