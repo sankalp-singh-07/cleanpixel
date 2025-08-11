@@ -1,5 +1,7 @@
+import UploadForm from '../components/UploadForm';
+
 const Upload = () => {
-	return <div>Upload</div>;
+	return <UploadForm />;
 };
 
 export default Upload;
