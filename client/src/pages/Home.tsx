@@ -3,7 +3,7 @@ import DarkButton from '../components/DarkButton';
 const Home = () => {
 	return (
 		<>
-			<div className="text-primary">Home</div>
+			<h1 className="text-primary">Home</h1>
 			<DarkButton />
 		</>
 	);

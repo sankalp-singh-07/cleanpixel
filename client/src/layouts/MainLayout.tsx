@@ -1,15 +1,10 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 
 export default function MainLayout() {
 	return (
-		<div>
-			<header>
-				<nav>
-					<NavLink to="/">Home</NavLink>
-					<NavLink to="/gallery">Gallery</NavLink>
-					<NavLink to="/upload">Upload</NavLink>
-				</nav>
-			</header>
+		<div className="max-w-screen">
+			<Navbar />
 
 			<main>
 				<Outlet />
