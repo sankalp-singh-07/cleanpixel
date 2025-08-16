@@ -5,8 +5,8 @@ import { DropdownMenuComponent } from '../ui/DropdownMenu';
 import { Home, Image, Upload } from 'lucide-react';
 
 const linkBase =
-	'text-foreground/80 hover:text-foreground transition-colors px-3 py-2 rounded-lg flex items-center gap-2';
-const activeLink = 'text-foreground underline und';
+	'text-foreground/80 hover:text-primary/80 transition-colors px-3 py-2 rounded-lg flex items-center gap-2';
+const activeLink = 'text-primary underline underline-offset-4 decoration-2';
 
 const Navbar = () => {
 	const [menuOpen, setMenuOpen] = useState(false);

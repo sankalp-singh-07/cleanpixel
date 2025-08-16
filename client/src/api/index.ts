@@ -7,7 +7,7 @@ export const tokenHelpers = {
 };
 
 const api = axios.create({
-	baseURL: process.env.REACT_APP_BASE_URL,
+	baseURL: import.meta.env.VITE_API_URL,
 	timeout: 15000,
 	headers: { 'Content-Type': 'application/json' },
 	withCredentials: true,
