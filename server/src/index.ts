@@ -16,21 +16,12 @@ const allowedOrigins =
 		? ['frontend_domain']
 		: ['http://localhost:5173'];
 
-const corsOptions: cors.CorsOptions = {
-	origin(origin, cb) {
-		if (!origin) return cb(null, true);
-		if (allowedOrigins.includes(origin)) return cb(null, true);
-		cb(new Error('Not allowed by CORS'));
-	},
-	credentials: true,
-	methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-	allowedHeaders: ['Content-Type', 'Authorization'],
-	optionsSuccessStatus: 204,
-};
-
-app.use(cors(corsOptions));
-
-app.options('*', cors(corsOptions));
+app.use(
+	cors({
+		origin: allowedOrigins,
+		credentials: true,
+	})
+);
 
 app.use('/api', authRoute);
 app.use('/api', handleImg);
