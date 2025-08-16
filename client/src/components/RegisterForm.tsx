@@ -16,22 +16,52 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, XCircle, CheckCircle } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export function RegisterForm() {
 	const [serverError, setServerError] = useState<string | null>(null);
+	const [capsLockOn, setCapsLockOn] = useState(false);
+	const [showPw, setShowPw] = useState(false);
+
+	const navigate = useNavigate();
 
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting },
+		formState: { errors, isSubmitting, isValid },
 		setError,
 		reset,
+		watch,
 	} = useForm<signupFormSchemaType>({
 		resolver: zodResolver(signupFormSchema),
-		defaultValues: { name: '', email: '', username: '', password: '' },
+		defaultValues: {
+			name: '',
+			email: '',
+			username: '',
+			password: '',
+		},
+		mode: 'onChange',
 	});
+
+	const password = watch('password') || '';
+	const checks = useMemo(
+		() => ({
+			length: password.length >= 6,
+			lower: /[a-z]/.test(password),
+			upper: /[A-Z]/.test(password),
+			symbol: /[^A-Za-z0-9]/.test(password),
+		}),
+		[password]
+	);
+	const score =
+		(checks.length ? 1 : 0) +
+		(checks.lower ? 1 : 0) +
+		(checks.upper ? 1 : 0) +
+		(checks.symbol ? 1 : 0);
+	const percent = (score / 4) * 100;
 
 	const onSubmit = async (values: signupFormSchemaType) => {
 		setServerError(null);
@@ -51,7 +81,8 @@ export function RegisterForm() {
 				payload.name
 			);
 			reset();
-			console.log('user created');
+
+			navigate('/login');
 		} catch (err: any) {
 			const msg: string =
 				err?.response?.data?.message ||
@@ -76,11 +107,15 @@ export function RegisterForm() {
 		<div className="flex flex-col gap-6">
 			<Card>
 				<CardHeader>
-					<CardTitle>Create your account</CardTitle>
-					<CardDescription>
+					<CardTitle className="text-xl font-semibold text-center">
+						Create your account
+					</CardTitle>
+					<CardDescription className="text-center">
 						Enter your details below to get started.
 					</CardDescription>
 				</CardHeader>
+
+				<br />
 
 				<CardContent>
 					{serverError && (
@@ -91,7 +126,7 @@ export function RegisterForm() {
 
 					<form onSubmit={handleSubmit(onSubmit)} noValidate>
 						<div className="flex flex-col gap-6">
-							<div className="grid gap-3">
+							<div className="grid gap-2">
 								<Label htmlFor="name">Name</Label>
 								<Input
 									id="name"
@@ -99,33 +134,41 @@ export function RegisterForm() {
 									placeholder="Your full name"
 									autoComplete="name"
 									disabled={isSubmitting}
+									aria-invalid={!!errors.name}
 									{...register('name')}
+									className={errors.name && 'border-red-500'}
 								/>
 								{errors.name && (
-									<p className="text-xs text-red-600">
-										{errors.name.message}
-									</p>
+									<FieldError
+										message={errors.name.message as string}
+									/>
 								)}
 							</div>
 
-							<div className="grid gap-3">
+							<div className="grid gap-2">
 								<Label htmlFor="username">Username</Label>
 								<Input
 									id="username"
 									type="text"
-									placeholder="Choose a username"
+									placeholder="Enter your username"
 									autoComplete="username"
 									disabled={isSubmitting}
+									aria-invalid={!!errors.username}
 									{...register('username')}
+									className={
+										errors.username && 'border-red-500'
+									}
 								/>
 								{errors.username && (
-									<p className="text-xs text-red-600">
-										{errors.username.message}
-									</p>
+									<FieldError
+										message={
+											errors.username.message as string
+										}
+									/>
 								)}
 							</div>
 
-							<div className="grid gap-3">
+							<div className="grid gap-2">
 								<Label htmlFor="email">Email</Label>
 								<Input
 									id="email"
@@ -134,40 +177,111 @@ export function RegisterForm() {
 									autoComplete="email"
 									inputMode="email"
 									disabled={isSubmitting}
+									aria-invalid={!!errors.email}
 									{...register('email')}
+									className={errors.email && 'border-red-500'}
 								/>
 								{errors.email && (
-									<p className="text-xs text-red-600">
-										{errors.email.message}
-									</p>
+									<FieldError
+										message={errors.email.message as string}
+									/>
 								)}
 							</div>
 
-							<div className="grid gap-3">
+							<div className="grid gap-2">
 								<Label htmlFor="password">Password</Label>
-								<Input
-									id="password"
-									type="password"
-									placeholder="Create a strong password"
-									autoComplete="new-password"
-									disabled={isSubmitting}
-									{...register('password')}
-								/>
-								{errors.password && (
-									<p className="text-xs text-red-600">
-										{errors.password.message}
+
+								<div className="relative">
+									<Input
+										id="password"
+										type={showPw ? 'text' : 'password'}
+										placeholder="Create a strong password"
+										autoComplete="new-password"
+										disabled={isSubmitting}
+										aria-invalid={!!errors.password}
+										{...register('password')}
+										onKeyUp={(e) =>
+											setCapsLockOn(
+												(e as any).getModifierState?.(
+													'CapsLock'
+												) || false
+											)
+										}
+										className={`pr-10 ${
+											errors.password && 'border-red-500'
+										}`}
+									/>
+									<span
+										aria-label={
+											showPw
+												? 'Hide password'
+												: 'Show password'
+										}
+										onClick={() => setShowPw((s) => !s)}
+										className="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground hover:text-foreground cursor-pointer"
+										tabIndex={-1}
+									>
+										{showPw ? (
+											<EyeOff className="h-5 w-5" />
+										) : (
+											<Eye className="h-5 w-5" />
+										)}
+									</span>
+								</div>
+
+								{capsLockOn && (
+									<p className="text-xs text-amber-600">
+										Caps Lock is on
 									</p>
 								)}
-								<p className="text-xs text-muted-foreground">
-									Use at least 6 characters.
-								</p>
+								{errors.password && (
+									<FieldError
+										message={
+											errors.password.message as string
+										}
+									/>
+								)}
+
+								<div className="mt-1">
+									<div className="h-2 w-full rounded bg-muted">
+										<div
+											className={cn(
+												'h-2 rounded transition-all',
+												score <= 1 && 'bg-red-500',
+												score === 2 && 'bg-orange-500',
+												score === 3 && 'bg-yellow-500',
+												score === 4 && 'bg-green-500'
+											)}
+											style={{ width: `${percent}%` }}
+											aria-label="Password strength"
+										/>
+									</div>
+									<div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+										<PwRule
+											ok={checks.length}
+											label="At least 6 characters"
+										/>
+										<PwRule
+											ok={checks.lower}
+											label="Lowercase letter"
+										/>
+										<PwRule
+											ok={checks.upper}
+											label="Uppercase letter"
+										/>
+										<PwRule
+											ok={checks.symbol}
+											label="Symbol"
+										/>
+									</div>
+								</div>
 							</div>
 
 							<div className="flex flex-col gap-3">
 								<Button
 									type="submit"
-									className="w-full"
-									disabled={isSubmitting}
+									className="w-full cursor-pointer"
+									disabled={isSubmitting || !isValid}
 								>
 									{isSubmitting
 										? 'Creating account…'
@@ -188,6 +302,35 @@ export function RegisterForm() {
 					</form>
 				</CardContent>
 			</Card>
+		</div>
+	);
+}
+
+function FieldError({ message }: { message: string }) {
+	return (
+		<p className="text-xs text-red-600 flex items-center gap-1">
+			<XCircle className="h-3 w-3" />
+			{message}
+		</p>
+	);
+}
+
+function PwRule({ ok, label }: { ok: boolean; label: string }) {
+	return (
+		<div className="flex items-center gap-2">
+			{ok ? (
+				<CheckCircle className="h-3 w-3 text-green-500" />
+			) : (
+				<XCircle className="h-3 w-3 text-red-500" />
+			)}
+			<span
+				className={cn(
+					'text-xs',
+					ok ? 'text-green-600' : 'text-red-600'
+				)}
+			>
+				{label}
+			</span>
 		</div>
 	);
 }
