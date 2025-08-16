@@ -4,7 +4,10 @@ const hasLower = /[a-z]/;
 const hasUpper = /[A-Z]/;
 const hasSymbol = /[^A-Za-z0-9]/;
 
-// export const loginFormSchema = z.object({});
+export const loginFormSchema = z.object({
+	email: z.email('Enter a valid email').trim(),
+	password: z.string().min(6, 'At least 6 characters'),
+});
 
 export const signupFormSchema = z.object({
 	name: z
@@ -25,5 +28,5 @@ export const signupFormSchema = z.object({
 		.regex(hasSymbol, 'Must include a symbol'),
 });
 
-// export type loginFormSchemaType = z.infer<typeof loginFormSchema>;
+export type loginFormSchemaType = z.infer<typeof loginFormSchema>;
 export type signupFormSchemaType = z.infer<typeof signupFormSchema>;

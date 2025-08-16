@@ -81,7 +81,7 @@ const Navbar = () => {
 							asChild
 							className="rounded-3xl px-5 py-2 text-base text-white shadow-sm"
 						>
-							<Link to="/get-started">Get Started</Link>
+							<Link to="/register">Get Started</Link>
 						</Button>
 					</div>
 

@@ -74,12 +74,15 @@ export function RegisterForm() {
 		};
 
 		try {
-			await signUp(
+			const res = await signUp(
 				payload.email,
 				payload.username,
 				payload.password,
 				payload.name
 			);
+
+			console.log(res);
+
 			reset();
 
 			navigate('/login');

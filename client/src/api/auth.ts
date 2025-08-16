@@ -18,7 +18,6 @@ export const login = async (email: string, password: string) => {
 	const res = await api.post<LoginResponse>('/login', { user });
 	const data = res.data;
 	localStorage.setItem('access_token', data.accessToken);
-	console.log(data);
 	return data;
 };
 
