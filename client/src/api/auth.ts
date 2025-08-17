@@ -1,28 +1,33 @@
-import type { LoginResponse, SignupResponse } from '@/types/authTypes';
+import type { MeRes, LoginResponse, SignupResponse } from '@/types/authTypes';
 import api from '.';
 
-export const signUp = async (
+export async function apiSignUp(
 	email: string,
 	username: string,
 	password: string,
 	name: string
-) => {
-	const user = { email, username, password, name };
-	const res = await api.post<SignupResponse>('/signup', { user });
-	const data = res.data;
+): Promise<SignupResponse> {
+	const { data } = await api.post<SignupResponse>('/signup', {
+		user: { email, username, password, name },
+	});
 	return data;
-};
+}
 
-export const login = async (email: string, password: string) => {
-	const user = { email, password };
-	const res = await api.post<LoginResponse>('/login', { user });
-	const data = res.data;
-	localStorage.setItem('access_token', data.accessToken);
+export async function apiLogin(
+	email: string,
+	password: string
+): Promise<LoginResponse> {
+	const { data } = await api.post<LoginResponse>('/login', {
+		user: { email, password },
+	});
 	return data;
-};
+}
 
-export const logout = async () => {
+export async function apiLogout(): Promise<void> {
 	await api.post('/logout');
-	localStorage.removeItem('access_token');
-	window.location.href = '/login';
-};
+}
+
+export async function apiMe(): Promise<MeRes['user']> {
+	const { data } = await api.get<MeRes>('/me');
+	return data.user;
+}

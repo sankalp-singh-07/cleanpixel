@@ -1,65 +1,110 @@
+import { useAuthStore } from '@/store/authStore';
 import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
-
-export const tokenHelpers = {
-	getToken: () => localStorage.getItem('accessToken'),
-	setToken: (t: string) => localStorage.setItem('accessToken', t),
-	clearToken: () => localStorage.removeItem('accessToken'),
-};
 
 const api = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
 	timeout: 15000,
-	headers: { 'Content-Type': 'application/json' },
 	withCredentials: true,
 });
 
+const refreshClient = axios.create({
+	baseURL: import.meta.env.VITE_API_URL,
+	withCredentials: true,
+	headers: { 'Content-Type': 'application/json' },
+});
+
+export const tokenHelpers = {
+	getToken: () => useAuthStore.getState().accessToken,
+	setToken: (t: string) => useAuthStore.getState().setAccessToken(t),
+	clearAll: () => {
+		useAuthStore.getState().clear();
+		delete api.defaults.headers.common['Authorization'];
+	},
+};
+
 const PUBLIC_PATHS = ['/login', '/signup', '/refresh', '/logout'];
+
+const pathOf = (u?: string) => {
+	try {
+		const base =
+			(import.meta.env.VITE_API_URL || '').replace(/\/$/, '') ||
+			'http://x';
+		return new URL(u || '', base).pathname.toLowerCase();
+	} catch {
+		return (u || '').toLowerCase();
+	}
+};
 
 api.interceptors.request.use(
 	(config) => {
 		const token = tokenHelpers.getToken();
-
-		const url = (config.url || '').toLowerCase();
-		const isPublic = PUBLIC_PATHS.some((p) => url.startsWith(p));
-
+		const path = pathOf(config.url);
+		const isPublic = PUBLIC_PATHS.some(
+			(p) => path === p || path.startsWith(`${p}/`)
+		);
 		if (token && !isPublic) {
 			config.headers = config.headers ?? {};
-			config.headers['Authorization'] = `Bearer ${token}`;
+			(config.headers as Record<string, string>)[
+				'Authorization'
+			] = `Bearer ${token}`;
 		}
 		return config;
 	},
 	(error) => Promise.reject(error)
 );
 
-api.interceptors.response.use(
-	(res) => res,
-	async (error: AxiosError) => {
-		const original = error.config as AxiosRequestConfig & {
-			_retry?: boolean;
-		};
+let refreshPromise: Promise<string> | null = null;
 
-		if (error.response?.status !== 401 || original?._retry) {
-			return Promise.reject(error);
-		}
-		original._retry = true;
-
-		try {
-			const baseURL = process.env.REACT_APP_BASE_URL;
-			const refreshRes = await axios.get(`${baseURL}/auth/refresh`, {
-				withCredentials: true,
-			});
-
-			const newToken = (refreshRes.data as any)?.accessToken;
-			if (newToken) {
+async function refreshToken(): Promise<string> {
+	if (!refreshPromise) {
+		refreshPromise = refreshClient
+			.post<{ accessToken: string }>('/refresh')
+			.then(({ data }) => {
+				const newToken = data.accessToken;
 				tokenHelpers.setToken(newToken);
 				api.defaults.headers.common[
 					'Authorization'
 				] = `Bearer ${newToken}`;
-			}
+				return newToken;
+			})
+			.finally(() => {
+				refreshPromise = null;
+			});
+	}
+	return refreshPromise;
+}
 
+api.interceptors.response.use(
+	(res) => res,
+	async (error: AxiosError) => {
+		const original = error.config as
+			| (AxiosRequestConfig & { _retry?: boolean })
+			| undefined;
+		const status = error.response?.status;
+
+		if (!original) return Promise.reject(error);
+
+		const path = pathOf(original.url);
+		const isPublic = PUBLIC_PATHS.some(
+			(p) => path === p || path.startsWith(`${p}/`)
+		);
+		const isAuthErr = status === 401 || status === 419 || status === 440;
+
+		if (!isAuthErr || original._retry || isPublic) {
+			return Promise.reject(error);
+		}
+
+		original._retry = true;
+
+		try {
+			const newToken = await refreshToken();
+			original.headers = {
+				...(original.headers || {}),
+				Authorization: `Bearer ${newToken}`,
+			};
 			return api(original);
 		} catch (e) {
-			tokenHelpers.clearToken();
+			tokenHelpers.clearAll();
 			return Promise.reject(e);
 		}
 	}

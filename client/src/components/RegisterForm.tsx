@@ -4,7 +4,7 @@ import {
 } from '@/schemas/authSchema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signUp } from '@/api/auth';
+import useAuth from '@/hooks/useAuth';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +22,7 @@ import { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 export function RegisterForm() {
+	const { signup } = useAuth();
 	const [serverError, setServerError] = useState<string | null>(null);
 	const [capsLockOn, setCapsLockOn] = useState(false);
 	const [showPw, setShowPw] = useState(false);
@@ -74,7 +75,7 @@ export function RegisterForm() {
 		};
 
 		try {
-			const res = await signUp(
+			const res = await signup(
 				payload.email,
 				payload.username,
 				payload.password,

@@ -13,3 +13,5 @@ export type SignupResponse = {
 	message: string;
 	user: { id: string; email: string };
 };
+
+export type MeRes = { message: string; user: LoginResponse['user'] };

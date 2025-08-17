@@ -17,6 +17,8 @@ import {
 	Menu,
 	Upload,
 } from 'lucide-react';
+import { useAuthStore } from '@/store/authStore';
+import useAuth from '@/hooks/useAuth';
 
 type Props = {
 	open: boolean;
@@ -27,6 +29,14 @@ export function DropdownMenuComponent({ open, onOpenChange }: Props) {
 	const itemWrap = 'hover:bg-orange-400 focus:bg-orange-400';
 	const linkBase =
 		'w-full text-white text-base font-semibold cursor-pointer flex items-center justify-between gap-3';
+
+	const user = useAuthStore((s) => s.user);
+	const { logout } = useAuth();
+
+	const handleLogout = async () => {
+		onOpenChange(false);
+		await logout();
+	};
 
 	return (
 		<DropdownMenu open={open} onOpenChange={onOpenChange}>
@@ -127,16 +137,29 @@ export function DropdownMenuComponent({ open, onOpenChange }: Props) {
 							<DropdownMenuShortcut>⇧⌘C</DropdownMenuShortcut>
 						</Link>
 					</DropdownMenuItem>
-					<DropdownMenuItem asChild className={itemWrap}>
-						<Link
-							to="/logout"
-							onClick={() => onOpenChange(false)}
-							className={linkBase}
+
+					{!user ? (
+						<DropdownMenuItem asChild className={itemWrap}>
+							<Link
+								to="/register"
+								onClick={() => onOpenChange(false)}
+								className={linkBase}
+							>
+								Get Started
+								<DropdownMenuShortcut>⇧⌘G</DropdownMenuShortcut>
+							</Link>
+						</DropdownMenuItem>
+					) : (
+						<DropdownMenuItem
+							className={itemWrap}
+							onClick={handleLogout}
 						>
-							Log out
-							<DropdownMenuShortcut>⇧⌘L</DropdownMenuShortcut>
-						</Link>
-					</DropdownMenuItem>
+							<span className={linkBase}>
+								Logout
+								<DropdownMenuShortcut>⇧⌘L</DropdownMenuShortcut>
+							</span>
+						</DropdownMenuItem>
+					)}
 				</DropdownMenuGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>

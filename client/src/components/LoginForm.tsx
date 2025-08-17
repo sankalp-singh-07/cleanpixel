@@ -4,7 +4,7 @@ import {
 } from '@/schemas/authSchema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { login } from '@/api/auth';
+import useAuth from '@/hooks/useAuth';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
 const LoginForm = () => {
+	const { login } = useAuth();
 	const [serverError, setServerError] = useState<string | null>(null);
 	const [capsLockOn, setCapsLockOn] = useState(false);
 	const [showPw, setShowPw] = useState(false);
