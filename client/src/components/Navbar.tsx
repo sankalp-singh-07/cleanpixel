@@ -3,6 +3,8 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DropdownMenuComponent } from '../ui/DropdownMenu';
 import { Home, Image, Upload } from 'lucide-react';
+import useAuth from '@/hooks/useAuth';
+import { useAuthStore } from '@/store/authStore';
 
 const linkBase =
 	'text-foreground/80 hover:text-primary/80 transition-colors px-3 py-2 rounded-lg flex items-center gap-2';
@@ -10,7 +12,21 @@ const activeLink = 'text-primary underline underline-offset-4 decoration-2';
 
 const Navbar = () => {
 	const [menuOpen, setMenuOpen] = useState(false);
+	const [loggingOut, setLoggingOut] = useState(false);
 	const location = useLocation();
+
+	const { logout } = useAuth();
+	const isAuthed = useAuthStore((s) => s.isAuthenticated());
+
+	const handleLogout = async () => {
+		if (loggingOut) return;
+		setLoggingOut(true);
+		try {
+			await logout();
+		} finally {
+			setLoggingOut(false);
+		}
+	};
 
 	useEffect(() => {
 		setMenuOpen(false);
@@ -45,7 +61,10 @@ const Navbar = () => {
 						</span>
 					</Link>
 
-					<nav className="hidden md:flex items-center gap-1">
+					<nav
+						aria-label="Primary"
+						className="hidden md:flex items-center gap-1"
+					>
 						<NavLink
 							to="/"
 							end
@@ -77,12 +96,24 @@ const Navbar = () => {
 					</nav>
 
 					<div className="hidden md:flex">
-						<Button
-							asChild
-							className="rounded-3xl px-5 py-2 text-base text-white shadow-sm"
-						>
-							<Link to="/register">Get Started</Link>
-						</Button>
+						{!isAuthed ? (
+							<Button
+								asChild
+								className="rounded-3xl px-5 py-2 text-base text-white shadow-sm"
+							>
+								<Link to="/register">Get Started</Link>
+							</Button>
+						) : (
+							<Button
+								type="button"
+								onClick={handleLogout}
+								disabled={loggingOut}
+								className="rounded-3xl px-5 py-2 text-base text-white shadow-sm"
+								aria-busy={loggingOut}
+							>
+								{loggingOut ? 'Logging out…' : 'Logout'}
+							</Button>
+						)}
 					</div>
 
 					<div className="md:hidden flex">

@@ -76,7 +76,7 @@
   a:hover { color: var(--accent); }
 
   button {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-md bg-primary text-white font-medium shadow-sm;
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-md bg-primary text-white font-medium shadow-sm cursor-pointer;
     transition: background-color 0.2s ease, transform 0.1s ease;
   }
   button:hover { background-color: var(--accent); transform: translateY(-1px); }
