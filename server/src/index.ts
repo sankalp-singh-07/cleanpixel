@@ -11,14 +11,11 @@ app.use(cookieParser());
 
 const PORT = 3000;
 
-const allowedOrigins =
-	process.env.NODE_ENV === 'production'
-		? ['frontend_domain']
-		: ['http://localhost:5173'];
+app.set('trust proxy', 1);
 
 app.use(
 	cors({
-		origin: allowedOrigins,
+		origin: ['https://your-frontend.com', 'http://localhost:5173'],
 		credentials: true,
 	})
 );
