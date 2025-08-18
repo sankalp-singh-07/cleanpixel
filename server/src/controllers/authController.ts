@@ -120,7 +120,7 @@ export const signup = async (req: Request, res: Response) => {
 
 export const meController = async (req: Request, res: Response) => {
 	try {
-		const userId = req.userId; // set by requireAuth middleware
+		const userId = req.userId;
 		if (!userId)
 			return res.status(401).json({ message: 'Unauthorized access' });
 

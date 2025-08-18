@@ -15,7 +15,7 @@ authRoute.post('/signup', signup);
 
 authRoute.get('/me', verifyAccessTokenMiddleware, meController);
 
-authRoute.get('/refresh', refreshController);
+authRoute.post('/refresh', refreshController);
 
 authRoute.post('/logout', logoutController);
 
