@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DropdownMenuComponent } from '../ui/DropdownMenu';
-import { Home, Image, Upload } from 'lucide-react';
+import { Home, Image, LogOut, Upload } from 'lucide-react';
 import useAuth from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/authStore';
 import DarkModeToggle from './DarkButton';
+import { Spinner } from './Spinner';
 
 const linkBase =
 	'text-foreground/80 hover:text-primary/80 transition-colors px-3 py-2 rounded-lg flex items-center gap-2';
@@ -108,15 +109,20 @@ const Navbar = () => {
 									<Link to="/register">Get Started</Link>
 								</Button>
 							) : (
-								<Button
-									type="button"
+								<span
 									onClick={handleLogout}
-									disabled={loggingOut}
-									className="rounded-3xl px-5 py-2 text-base text-white shadow-sm"
+									className="rounded-3xl px-5 py-2 text-base dark:text-white shadow-sm text-primary cursor-pointer"
 									aria-busy={loggingOut}
 								>
-									{loggingOut ? 'Logging out…' : 'Logout'}
-								</Button>
+									{loggingOut ? (
+										<Spinner
+											size={22}
+											className="text-primary dark:text-white"
+										/>
+									) : (
+										<LogOut className="w-6 h-6 text-current" />
+									)}
+								</span>
 							)}
 						</div>
 

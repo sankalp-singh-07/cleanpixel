@@ -97,34 +97,36 @@ export function DropdownMenuComponent({ open, onOpenChange }: Props) {
 
 				<DropdownMenuSeparator />
 
-				<DropdownMenuGroup>
-					<DropdownMenuItem asChild className={itemWrap}>
-						<Link
-							to="/invite"
-							onClick={() => onOpenChange(false)}
-							className={linkBase}
-						>
-							Invite Users
-							<DropdownMenuShortcut>
-								<ArrowRightIcon />
-							</DropdownMenuShortcut>
-						</Link>
-					</DropdownMenuItem>
-					<DropdownMenuItem asChild className={itemWrap}>
-						<Link
-							to="/pricing"
-							onClick={() => onOpenChange(false)}
-							className={linkBase}
-						>
-							Plans
-							<DropdownMenuShortcut>
-								<CirclePercent />
-							</DropdownMenuShortcut>
-						</Link>
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
+				{user && (
+					<DropdownMenuGroup>
+						<DropdownMenuItem asChild className={itemWrap}>
+							<Link
+								to="/invite"
+								onClick={() => onOpenChange(false)}
+								className={linkBase}
+							>
+								Invite Users
+								<DropdownMenuShortcut>
+									<ArrowRightIcon />
+								</DropdownMenuShortcut>
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem asChild className={itemWrap}>
+							<Link
+								to="/pricing"
+								onClick={() => onOpenChange(false)}
+								className={linkBase}
+							>
+								Plans
+								<DropdownMenuShortcut>
+									<CirclePercent />
+								</DropdownMenuShortcut>
+							</Link>
+						</DropdownMenuItem>
+					</DropdownMenuGroup>
+				)}
 
-				<DropdownMenuSeparator />
+				{user && <DropdownMenuSeparator />}
 
 				<DropdownMenuGroup>
 					<DropdownMenuItem asChild className={itemWrap}>
@@ -139,25 +141,42 @@ export function DropdownMenuComponent({ open, onOpenChange }: Props) {
 					</DropdownMenuItem>
 
 					{!user ? (
+						<>
+							<DropdownMenuItem asChild className={itemWrap}>
+								<Link
+									to="/register"
+									onClick={() => onOpenChange(false)}
+									className={linkBase}
+								>
+									Get Started
+									<DropdownMenuShortcut>
+										⇧⌘G
+									</DropdownMenuShortcut>
+								</Link>
+							</DropdownMenuItem>
+							<DropdownMenuItem asChild className={itemWrap}>
+								<Link
+									to="/login"
+									onClick={() => onOpenChange(false)}
+									className={linkBase}
+								>
+									Login
+									<DropdownMenuShortcut>
+										⇧⌘L
+									</DropdownMenuShortcut>
+								</Link>
+							</DropdownMenuItem>
+						</>
+					) : (
 						<DropdownMenuItem asChild className={itemWrap}>
-							<Link
-								to="/register"
-								onClick={() => onOpenChange(false)}
+							<button
+								type="button"
+								onClick={handleLogout}
 								className={linkBase}
 							>
-								Get Started
-								<DropdownMenuShortcut>⇧⌘G</DropdownMenuShortcut>
-							</Link>
-						</DropdownMenuItem>
-					) : (
-						<DropdownMenuItem
-							className={itemWrap}
-							onClick={handleLogout}
-						>
-							<span className={linkBase}>
 								Logout
 								<DropdownMenuShortcut>⇧⌘L</DropdownMenuShortcut>
-							</span>
+							</button>
 						</DropdownMenuItem>
 					)}
 				</DropdownMenuGroup>
