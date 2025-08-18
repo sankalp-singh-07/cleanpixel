@@ -7,6 +7,9 @@ import Upload from '../pages/Upload';
 import MainLayout from '../layouts/MainLayout';
 import NoPageFound from '../pages/NoPageFound';
 import ProtectedRoute from '@/components/ProtectedRoutes';
+import Invite from '@/pages/Invite';
+import Pricing from '@/pages/Pricing';
+import ContactUs from '@/pages/ContactUs';
 
 const MainRoutes = () => {
 	return (
@@ -32,6 +35,23 @@ const MainRoutes = () => {
 						</ProtectedRoute>
 					}
 				/>
+				<Route
+					path="invite"
+					element={
+						<ProtectedRoute>
+							<Invite />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="pricing"
+					element={
+						<ProtectedRoute>
+							<Pricing />
+						</ProtectedRoute>
+					}
+				/>
+				<Route path="contact" element={<ContactUs />} />
 
 				<Route path="*" element={<NoPageFound />} />
 			</Route>

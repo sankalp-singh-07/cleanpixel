@@ -5,6 +5,7 @@ import { DropdownMenuComponent } from '../ui/DropdownMenu';
 import { Home, Image, Upload } from 'lucide-react';
 import useAuth from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/authStore';
+import DarkModeToggle from './DarkButton';
 
 const linkBase =
 	'text-foreground/80 hover:text-primary/80 transition-colors px-3 py-2 rounded-lg flex items-center gap-2';
@@ -95,32 +96,36 @@ const Navbar = () => {
 						</NavLink>
 					</nav>
 
-					<div className="hidden md:flex">
-						{!isAuthed ? (
-							<Button
-								asChild
-								className="rounded-3xl px-5 py-2 text-base text-white shadow-sm"
-							>
-								<Link to="/register">Get Started</Link>
-							</Button>
-						) : (
-							<Button
-								type="button"
-								onClick={handleLogout}
-								disabled={loggingOut}
-								className="rounded-3xl px-5 py-2 text-base text-white shadow-sm"
-								aria-busy={loggingOut}
-							>
-								{loggingOut ? 'Logging out…' : 'Logout'}
-							</Button>
-						)}
-					</div>
+					<div className="flex items-center gap-2">
+						<DarkModeToggle />
 
-					<div className="md:hidden flex">
-						<DropdownMenuComponent
-							open={menuOpen}
-							onOpenChange={setMenuOpen}
-						/>
+						<div className="hidden md:block">
+							{!isAuthed ? (
+								<Button
+									asChild
+									className="rounded-3xl px-5 py-2 text-base text-white shadow-sm"
+								>
+									<Link to="/register">Get Started</Link>
+								</Button>
+							) : (
+								<Button
+									type="button"
+									onClick={handleLogout}
+									disabled={loggingOut}
+									className="rounded-3xl px-5 py-2 text-base text-white shadow-sm"
+									aria-busy={loggingOut}
+								>
+									{loggingOut ? 'Logging out…' : 'Logout'}
+								</Button>
+							)}
+						</div>
+
+						<div className="md:hidden">
+							<DropdownMenuComponent
+								open={menuOpen}
+								onOpenChange={setMenuOpen}
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
