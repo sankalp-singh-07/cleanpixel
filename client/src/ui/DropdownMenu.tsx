@@ -11,11 +11,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
 	ArrowRightIcon,
-	CirclePercent,
+	DollarSign,
 	Home,
 	Image,
 	Menu,
 	Upload,
+	User,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import useAuth from '@/hooks/useAuth';
@@ -28,7 +29,7 @@ type Props = {
 export function DropdownMenuComponent({ open, onOpenChange }: Props) {
 	const itemWrap = 'hover:bg-orange-400 focus:bg-orange-400';
 	const linkBase =
-		'w-full text-white text-base font-semibold cursor-pointer flex items-center justify-between gap-3';
+		'w-full text-white text-sm font-medium cursor-pointer flex items-center justify-between gap-3 break-words'; // ⬅ changed
 
 	const user = useAuthStore((s) => s.user);
 	const { logout } = useAuth();
@@ -56,6 +57,23 @@ export function DropdownMenuComponent({ open, onOpenChange }: Props) {
 				align="end"
 				sideOffset={10}
 			>
+				{user && (
+					<>
+						<div className="flex flex-col px-2 py-1.5 gap-2">
+							<span className="font-medium flex gap-2 items-start text-sm text-white break-words">
+								<User className="w-4 h-4 shrink-0 mt-0.5" />
+								Hi! {user.username}
+							</span>
+
+							<span className="font-medium text-sm text-white">
+								Credits : 5
+							</span>
+						</div>
+
+						<DropdownMenuSeparator />
+					</>
+				)}
+
 				<DropdownMenuGroup>
 					<DropdownMenuItem asChild className={itemWrap}>
 						<Link
@@ -117,9 +135,9 @@ export function DropdownMenuComponent({ open, onOpenChange }: Props) {
 								onClick={() => onOpenChange(false)}
 								className={linkBase}
 							>
-								Plans
+								Buy Credits
 								<DropdownMenuShortcut>
-									<CirclePercent />
+									<DollarSign />
 								</DropdownMenuShortcut>
 							</Link>
 						</DropdownMenuItem>

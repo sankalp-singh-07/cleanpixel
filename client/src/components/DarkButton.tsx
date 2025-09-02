@@ -26,7 +26,7 @@ const DarkModeToggle = () => {
                  bg-background 
                  text-primary hover:text-white 
                  hover:bg-primary 
-                 cursor-pointer focus-visible:ring-0"
+                 cursor-pointer focus-visible:ring-0 pt-1.5 pb-1"
 		>
 			{isDark ? (
 				<Sun className="h-5 w-5 text-current" />

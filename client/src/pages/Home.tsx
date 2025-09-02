@@ -1,7 +1,9 @@
+import Header from '@/components/Header';
+
 const Home = () => {
 	return (
 		<>
-			<h1 className="text-primary">Home</h1>
+			<Header />
 		</>
 	);
 };

@@ -76,11 +76,10 @@
   a:hover { color: var(--accent); }
 
   button {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-md bg-primary text-white font-medium shadow-sm cursor-pointer;
+    @apply inline-flex  items-center justify-center px-6 pt-2 pb-2.5 bg-primary text-white  shadow-sm cursor-pointer text-lg font-semibold;
     transition: background-color 0.2s ease, transform 0.1s ease;
   }
-  button:hover { background-color: var(--accent); transform: translateY(-1px); }
-  button:active { transform: translateY(0); }
+  button:hover { background-color: var(--accent)}
 
   input, textarea, select {
     @apply border border-border rounded-md px-3 py-2 bg-background text-foreground;

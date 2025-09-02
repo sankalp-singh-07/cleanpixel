@@ -7,6 +7,8 @@ import useAuth from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/authStore';
 import DarkModeToggle from './DarkButton';
 import { Spinner } from './Spinner';
+import ShowCredits from './ShowCredits';
+// import ShowCredits from './ShowCredits';
 
 const linkBase =
 	'text-foreground/80 hover:text-primary/80 transition-colors px-3 py-2 rounded-lg flex items-center gap-2';
@@ -98,13 +100,18 @@ const Navbar = () => {
 					</nav>
 
 					<div className="flex items-center gap-2">
+						{isAuthed && (
+							<div className="hidden md:block">
+								<ShowCredits />
+							</div>
+						)}
 						<DarkModeToggle />
 
 						<div className="hidden md:block">
 							{!isAuthed ? (
 								<Button
 									asChild
-									className="rounded-3xl px-5 py-2 text-base text-white shadow-sm"
+									className="rounded-3xl pt-1 pb-1.5 px-6 text-base text-white shadow-sm"
 								>
 									<Link to="/register">Get Started</Link>
 								</Button>
