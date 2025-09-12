@@ -84,10 +84,13 @@ export const removeImageController = async (req: Request, res: Response) => {
 
 		await deductCredit(userId);
 
+		const remaining = await checkCredits(userId);
+
 		res.status(200).json({
 			message: 'No Bg Image created and uploaded successfully',
 			imageUrl: img.secure_url,
 			imageId: imgDb.id,
+			credits: remaining,
 		});
 	} catch (error: any) {
 		console.error('Error removing background:', error);
