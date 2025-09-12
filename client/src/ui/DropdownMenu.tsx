@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import useAuth from '@/hooks/useAuth';
+import { useCreditStore } from '@/store/creditStore';
 
 type Props = {
 	open: boolean;
@@ -27,9 +28,11 @@ type Props = {
 };
 
 export function DropdownMenuComponent({ open, onOpenChange }: Props) {
+	const { credits, loading: creditsLoading } = useCreditStore();
+
 	const itemWrap = 'hover:bg-orange-400 focus:bg-orange-400';
 	const linkBase =
-		'w-full text-white text-sm font-medium cursor-pointer flex items-center justify-between gap-3 break-words'; // ⬅ changed
+		'w-full text-white text-sm font-medium cursor-pointer flex items-center justify-between gap-3 break-words';
 
 	const user = useAuthStore((s) => s.user);
 	const { logout } = useAuth();
@@ -66,7 +69,11 @@ export function DropdownMenuComponent({ open, onOpenChange }: Props) {
 							</span>
 
 							<span className="font-medium text-sm text-white">
-								Credits : 5
+								{creditsLoading ? (
+									<>Loading</>
+								) : (
+									<>Credits : {credits}</>
+								)}
 							</span>
 						</div>
 
