@@ -1,4 +1,8 @@
-import type { RemoveImgType, UploadImgType } from '@/types/uploadTypes';
+import type {
+	GalleryResponse,
+	RemoveImgType,
+	UploadImgType,
+} from '@/types/uploadTypes';
 import api from '@/api';
 
 export async function uploadImage(
@@ -32,4 +36,23 @@ export async function removeImage(
 		}
 	);
 	return data;
+}
+
+export async function getGallery(
+	show: 'all' | 'original' | 'removed' = 'all',
+	sort: 'asc' | 'desc' = 'desc',
+	page = 1,
+	limit = 10
+): Promise<GalleryResponse> {
+	try {
+		const { data } = await api.get<GalleryResponse>('/gallery', {
+			params: { show, sort, page, limit },
+		});
+		return data;
+	} catch (error: any) {
+		console.error('Error fetching gallery:', error);
+		throw new Error(
+			error.response?.data?.message || 'Failed to fetch gallery'
+		);
+	}
 }
