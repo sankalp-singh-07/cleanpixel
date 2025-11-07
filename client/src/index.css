@@ -19,13 +19,13 @@
   --radius-lg: 0.75rem;
 }
 
-
-:root{
-  --primary: #F97316;  
-  --secondary: #FEF3E7; 
-  --accent: #1E1E1E;   
+/* 🌞 Light Theme Variables */
+:root {
+  --primary: #F97316;
+  --secondary: #FEF3E7;
+  --accent: #1E1E1E;
   --background: #FFF9F4;
-  --text: #262626;     
+  --text: #262626;
   --border: #E5E5E5;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
@@ -33,15 +33,14 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
-.dark{
+.dark {
   --background: #1E1E1E;
   --text: #F5E0CF;
-  --primary: #F97316; 
-  --accent: #FB923C;  
+  --primary: #F97316;
+  --accent: #FB923C;
   --secondary: #2B2B2B;
   --border: #333333;
 }
-
 
 @layer base {
   html {
@@ -64,6 +63,7 @@
     line-height: 1.2;
     @apply text-foreground;
   }
+
   h1 { font-size: 2.25rem; }
   h2 { font-size: 1.875rem; }
   h3 { font-size: 1.5rem; }
@@ -73,19 +73,22 @@
     text-decoration: none;
     transition: color 0.2s ease;
   }
+
   a:hover { color: var(--accent); }
 
   button {
-    @apply inline-flex  items-center justify-center px-6 pt-2 pb-2.5 bg-primary text-white  shadow-sm cursor-pointer text-lg font-semibold;
+    @apply inline-flex items-center justify-center px-6 pt-2 pb-2.5 bg-primary text-white shadow-sm cursor-pointer text-lg font-semibold;
     transition: background-color 0.2s ease, transform 0.1s ease;
   }
-  button:hover { background-color: var(--accent)}
+
+  button:hover { background-color: var(--accent); }
 
   input, textarea, select {
     @apply border border-border rounded-md px-3 py-2 bg-background text-foreground;
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
+
   input:focus, textarea:focus, select:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 35%, transparent);
@@ -97,4 +100,45 @@
 
   *, *::before, *::after { box-sizing: border-box; }
   img { max-width: 100%; display: block; }
+}
+
+@layer utilities {
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(-8px);
+    }
+    50% {
+      transform: translateY(8px);
+    }
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float-tilt {
+    0%, 100% {
+      transform: translateY(-8px) rotate(-2deg);
+    }
+    50% {
+      transform: translateY(8px) rotate(2deg);
+    }
+  }
+
+  .animate-float-tilt {
+    animation: float-tilt 6s ease-in-out infinite;
+  }
+
+  @keyframes orbit {
+    0% {
+      transform: rotate(0deg) translateX(12px) rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg) translateX(12px) rotate(-360deg);
+    }
+  }
+
+  .animate-orbit {
+    animation: orbit 8s linear infinite;
+  }
 }
