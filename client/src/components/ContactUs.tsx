@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, MessageCircle, Send, Clock } from 'lucide-react';
+import { Mail, Phone, MessageCircle, Send, Clock } from 'lucide-react';
 
 const ContactUs = () => {
 	const [formData, setFormData] = useState({
@@ -255,7 +255,6 @@ const ContactUs = () => {
 				</div>
 			</div>
 
-			{/* Footer Note */}
 			<div className="max-w-7xl mx-auto mt-12 text-center">
 				<p className="text-foreground/70">
 					Need immediate assistance? Call us at{' '}
