@@ -9,7 +9,7 @@ import NoPageFound from '../pages/NoPageFound';
 import ProtectedRoute from '@/components/ProtectedRoutes';
 import Invite from '@/pages/Invite';
 import Pricing from '@/pages/Pricing';
-import ContactUs from '@/pages/ContactUs';
+import Contact from '@/pages/Contact';
 
 const MainRoutes = () => {
 	return (
@@ -51,7 +51,7 @@ const MainRoutes = () => {
 						</ProtectedRoute>
 					}
 				/>
-				<Route path="contact" element={<ContactUs />} />
+				<Route path="contact" element={<Contact />} />
 
 				<Route path="*" element={<NoPageFound />} />
 			</Route>
