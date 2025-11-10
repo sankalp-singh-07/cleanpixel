@@ -48,7 +48,7 @@ export const PlanCard = ({ name, credits, amount, popular = false }: Props) => {
 					<div
 						className={`${colors.accent} text-white px-6 py-1.5 rounded-full text-sm font-bold uppercase tracking-wide shadow-lg`}
 					>
-						Most Popular
+						Popular
 					</div>
 				</div>
 			)}
@@ -61,12 +61,12 @@ export const PlanCard = ({ name, credits, amount, popular = false }: Props) => {
 				}`}
 			>
 				<div className="p-8 flex text-center flex-col h-fit ">
-					<h3 className="text-3xl font-bold capitalize text-foreground mb-3 font-serif">
+					<h3 className="text-3xl md:text-5xl font-bold capitalize text-foreground mb-3 font-sans">
 						{name}
 					</h3>
 
 					<div className="mb-6">
-						<span className="text-5xl font-bold text-foreground">
+						<span className="text-2xl md:text-4xl font-bold text-foreground">
 							₹{amount}
 						</span>
 						<p className="text-sm text-foreground/60 mt-1">
