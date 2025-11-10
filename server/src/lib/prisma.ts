@@ -165,7 +165,7 @@ export const createOrder = async (
 	amount: number,
 	razorpayOrderId: string
 ) => {
-	return await client.payments.create({
+	return await client.payment.create({
 		data: {
 			userId,
 			credits,
@@ -177,7 +177,7 @@ export const createOrder = async (
 };
 
 export const updateOrderStatus = async (razorpayOrderId: string) => {
-	return await client.payments.updateMany({
+	return await client.payment.updateMany({
 		where: { razorpayOrderId },
 		data: { status: true },
 	});
@@ -187,7 +187,58 @@ export const findPaymentrecord = async (
 	razorpayOrderId: string,
 	userId: string
 ) => {
-	return await client.payments.findFirst({
+	return await client.payment.findFirst({
 		where: { razorpayOrderId, userId },
 	});
+};
+
+export const fetchProfile = async (username: string) => {
+	try {
+		if (!username) throw new Error('Username not provided');
+
+		const user = await client.user.findUnique({
+			where: { username },
+			select: {
+				id: true,
+				username: true,
+				name: true,
+				bio: true,
+				avatarUrl: true,
+				publicProfile: true,
+				folders: {
+					where: { isPublic: true },
+					select: {
+						id: true,
+						name: true,
+						description: true,
+						thumbnailUrl: true,
+						isPublic: true,
+						createdAt: true,
+					},
+				},
+				images: {
+					where: { isPublic: true },
+					select: {
+						id: true,
+						originalUrl: true,
+						removedBgUrl: true,
+						replacedUrl: true,
+						type: true,
+						isPublic: true,
+						createdAt: true,
+					},
+				},
+			},
+		});
+
+		if (!user) throw new Error('No valid user found');
+
+		if (!user.publicProfile)
+			throw new Error('This user’s profile is private');
+
+		return user;
+	} catch (error) {
+		console.error('Error fetching profile:', error);
+		throw error;
+	}
 };
