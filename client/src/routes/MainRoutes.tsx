@@ -10,6 +10,7 @@ import ProtectedRoute from '@/components/ProtectedRoutes';
 import Invite from '@/pages/Invite';
 import Pricing from '@/pages/Pricing';
 import Contact from '@/pages/Contact';
+import Profile from '@/pages/Profile';
 
 const MainRoutes = () => {
 	return (
@@ -48,6 +49,22 @@ const MainRoutes = () => {
 					element={
 						<ProtectedRoute>
 							<Pricing />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="profile"
+					element={
+						<ProtectedRoute>
+							<Profile />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="invite"
+					element={
+						<ProtectedRoute>
+							<Invite />
 						</ProtectedRoute>
 					}
 				/>

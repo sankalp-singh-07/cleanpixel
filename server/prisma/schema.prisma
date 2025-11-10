@@ -9,29 +9,53 @@ datasource db {
 }
 
 model User {
-  id        String      @id @default(cuid())
-  email     String      @unique
-  username  String      @unique
-  password  String
-  name      String
-  credits   Int         @default(5)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @default(now()) @updatedAt
-  UserImage UserImage[]
-  Payments  Payments[]
+  id            String   @id @default(cuid())
+  email         String   @unique
+  username      String   @unique
+  password      String
+  name          String
+  avatarUrl     String?
+  bio           String?
+  publicProfile Boolean  @default(true)
+  credits       Int      @default(5)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+
+  images   UserImage[]
+  payments Payment[]
+  folders  Folder[]
 }
 
 model UserImage {
   id           String   @id @default(cuid())
   userId       String
+  folderId     String?
   originalUrl  String
   removedBgUrl String?
+  replacedUrl  String?
+  isPublic     Boolean  @default(false)
+  type         String?
   createdAt    DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
+  folder Folder? @relation(fields: [folderId], references: [id])
 }
 
-model Payments {
+model Folder {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  description  String?
+  isPublic     Boolean  @default(false)
+  thumbnailUrl String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+
+  user   User        @relation(fields: [userId], references: [id])
+  images UserImage[]
+}
+
+model Payment {
   id              String   @id @default(cuid())
   userId          String
   credits         Int
