@@ -76,7 +76,10 @@ export const removeImageController = async (req: Request, res: Response) => {
 
 		fs.writeFileSync(filePath, Buffer.from(imgBuffer));
 
-		const img = await cloudinary.uploader.upload(filePath);
+		const img = await cloudinary.uploader.upload(filePath, {
+			resource_type: 'image',
+			format: 'png',
+		} as any);
 
 		fs.unlinkSync(filePath);
 
@@ -86,7 +89,7 @@ export const removeImageController = async (req: Request, res: Response) => {
 
 		const remaining = await checkCredits(userId);
 
-		res.status(200).json({
+		return res.status(200).json({
 			message: 'No Bg Image created and uploaded successfully',
 			imageUrl: img.secure_url,
 			imageId: imgDb.id,
@@ -98,10 +101,10 @@ export const removeImageController = async (req: Request, res: Response) => {
 		let status = 500;
 		let message = 'Background removal failed';
 
-		if (error.message.includes('quota exceeded')) status = 402;
-		if (error.message.includes('Too many requests')) status = 429;
+		if (error.message?.includes('quota exceeded')) status = 402;
+		if (error.message?.includes('Too many requests')) status = 429;
 
-		res.status(status).json({
+		return res.status(status).json({
 			message,
 			error: error.message,
 		});

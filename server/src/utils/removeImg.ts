@@ -2,7 +2,7 @@ import { REMOVE_BG_SECRET } from './keys';
 
 export const removeImg = async (url: string) => {
 	const formData = new FormData();
-	formData.append('size', 'auto');
+	formData.append('size', 'hd');
 	formData.append('image_url', url);
 
 	const response = await fetch('https://api.remove.bg/v1.0/removebg', {
