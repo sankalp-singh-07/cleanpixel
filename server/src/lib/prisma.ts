@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { FolderCreate, FolderUpdate } from '../types/folderTypes';
 
 const client = new PrismaClient();
 
@@ -299,5 +300,158 @@ export const updateUserProfile = async (
 			publicProfile: true,
 			updatedAt: true,
 		},
+	});
+};
+
+export const createFolder = async (userId: string, data: FolderCreate) => {
+	return client.folder.create({
+		data: {
+			userId,
+			name: data.name,
+			description: data.description ?? null,
+			isPublic: data.isPublic ?? false,
+			thumbnailUrl: data.thumbnailUrl ?? null,
+		},
+	});
+};
+
+export const listUserFolders = async (userId: string) => {
+	return client.folder.findMany({
+		where: { userId },
+		orderBy: { createdAt: 'desc' },
+	});
+};
+
+export const getFolderByIdForOwner = async (
+	folderId: string,
+	userId: string
+) => {
+	const folder = await client.folder.findUnique({
+		where: { id: folderId },
+		include: { images: true },
+	});
+	if (!folder) throw new Error('Folder not found');
+	if (folder.userId !== userId) throw new Error('Not authorized');
+	return folder;
+};
+
+export const updateFolder = async (
+	folderId: string,
+	userId: string,
+	data: FolderUpdate
+) => {
+	const folder = await client.folder.findUnique({ where: { id: folderId } });
+	if (!folder) throw new Error('Folder not found');
+	if (folder.userId !== userId) throw new Error('Not authorized');
+
+	const updatePayload: any = {};
+	if (data.name !== undefined) updatePayload.name = data.name;
+	if (data.description !== undefined)
+		updatePayload.description = data.description;
+	if (data.isPublic !== undefined) updatePayload.isPublic = data.isPublic;
+	if (data.thumbnailUrl !== undefined)
+		updatePayload.thumbnailUrl = data.thumbnailUrl;
+
+	return client.folder.update({
+		where: { id: folderId },
+		data: updatePayload,
+	});
+};
+
+export const deleteFolder = async (folderId: string, userId: string) => {
+	const folder = await client.folder.findUnique({ where: { id: folderId } });
+	if (!folder) throw new Error('Folder not found');
+	if (folder.userId !== userId) throw new Error('Not authorized');
+
+	await client.userImage.updateMany({
+		where: { folderId },
+		data: { folderId: null },
+	});
+
+	return client.folder.delete({ where: { id: folderId } });
+};
+
+export const getPublicFolderByUsername = async (
+	username: string,
+	folderId: string,
+	page = 1,
+	limit = 24
+) => {
+	const user = await client.user.findUnique({
+		where: { username },
+		select: { id: true, name: true, avatarUrl: true, publicProfile: true },
+	});
+	if (!user) throw new Error('User not found');
+	if (!user.publicProfile) throw new Error('Profile is private');
+
+	const folder = await client.folder.findUnique({
+		where: { id: folderId },
+	});
+	if (!folder) throw new Error('Folder not found');
+	if (folder.userId !== user.id)
+		throw new Error('Folder does not belong to user');
+	if (!folder.isPublic) throw new Error('Folder is private');
+
+	const images = await client.userImage.findMany({
+		where: { folderId: folder.id, isPublic: true },
+		orderBy: { createdAt: 'desc' },
+		skip: (page - 1) * limit,
+		take: limit,
+	});
+
+	const total = await client.userImage.count({
+		where: { folderId: folder.id, isPublic: true },
+	});
+
+	return {
+		folder: {
+			id: folder.id,
+			name: folder.name,
+			description: folder.description,
+			thumbnailUrl: folder.thumbnailUrl,
+			createdAt: folder.createdAt,
+		},
+		owner: { username, name: user.name, avatarUrl: user.avatarUrl },
+		images,
+		pagination: {
+			page,
+			limit,
+			total,
+			pages: Math.ceil(total / limit) || 1,
+		},
+	};
+};
+
+export const assignImageToFolder = async (
+	imageId: string,
+	folderId: string,
+	userId: string
+) => {
+	const image = await client.userImage.findUnique({ where: { id: imageId } });
+	if (!image) throw new Error('Image not found');
+	if (image.userId !== userId) throw new Error('Not authorized');
+
+	const folder = await client.folder.findUnique({ where: { id: folderId } });
+	if (!folder) throw new Error('Folder not found');
+	if (folder.userId !== userId)
+		throw new Error('Folder does not belong to user');
+
+	return client.userImage.update({
+		where: { id: imageId },
+		data: { folderId },
+	});
+};
+
+export const removeImageFromFolder = async (
+	imageId: string,
+	userId: string
+) => {
+	const image = await client.userImage.findUnique({ where: { id: imageId } });
+	if (!image) throw new Error('Image not found');
+	if (image.userId !== userId) throw new Error('Not authorized');
+
+	return client.userImage.update({
+		where: { id: imageId },
+		data: { folderId: null },
 	});
 };
