@@ -192,10 +192,8 @@ export const findPaymentrecord = async (
 	});
 };
 
-export const fetchProfile = async (username: string) => {
+export const fetchPublicProfile = async (username: string) => {
 	try {
-		if (!username) throw new Error('Username not provided');
-
 		const user = await client.user.findUnique({
 			where: { username },
 			select: {
@@ -212,7 +210,6 @@ export const fetchProfile = async (username: string) => {
 						name: true,
 						description: true,
 						thumbnailUrl: true,
-						isPublic: true,
 						createdAt: true,
 					},
 				},
@@ -220,25 +217,87 @@ export const fetchProfile = async (username: string) => {
 					where: { isPublic: true },
 					select: {
 						id: true,
-						originalUrl: true,
-						removedBgUrl: true,
 						replacedUrl: true,
+						originalUrl: true,
 						type: true,
-						isPublic: true,
 						createdAt: true,
 					},
 				},
 			},
 		});
 
-		if (!user) throw new Error('No valid user found');
-
-		if (!user.publicProfile)
-			throw new Error('This user’s profile is private');
+		if (!user) throw new Error('User not found');
+		if (!user.publicProfile) throw new Error('Profile is private');
 
 		return user;
-	} catch (error) {
-		console.error('Error fetching profile:', error);
-		throw error;
+	} catch (err) {
+		console.error('fetchPublicProfile:', err);
+		throw err;
 	}
+};
+
+export const getUserProfile = async (userId: string) => {
+	return await client.user.findUnique({
+		where: { id: userId },
+		select: {
+			id: true,
+			username: true,
+			name: true,
+			email: true,
+			avatarUrl: true,
+			bio: true,
+			publicProfile: true,
+			folders: {
+				select: {
+					id: true,
+					name: true,
+					description: true,
+					isPublic: true,
+					thumbnailUrl: true,
+					createdAt: true,
+				},
+			},
+			images: {
+				select: {
+					id: true,
+					originalUrl: true,
+					replacedUrl: true,
+					isPublic: true,
+					type: true,
+					createdAt: true,
+				},
+			},
+		},
+	});
+};
+
+export const updateUserProfile = async (
+	userId: string,
+	data: {
+		name?: string;
+		bio?: string;
+		avatarUrl?: string;
+		publicProfile?: boolean;
+	}
+) => {
+	const updateData: any = {};
+	if (data.name !== undefined) updateData.name = data.name;
+	if (data.bio !== undefined) updateData.bio = data.bio;
+	if (data.avatarUrl !== undefined) updateData.avatarUrl = data.avatarUrl;
+	if (data.publicProfile !== undefined)
+		updateData.publicProfile = data.publicProfile;
+
+	return await client.user.update({
+		where: { id: userId },
+		data: updateData,
+		select: {
+			id: true,
+			username: true,
+			name: true,
+			bio: true,
+			avatarUrl: true,
+			publicProfile: true,
+			updatedAt: true,
+		},
+	});
 };

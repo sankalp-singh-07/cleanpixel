@@ -2,6 +2,7 @@ import express from 'express';
 import authRoute from './routes/authRoute.js';
 import handleImg from './routes/handleImg.js';
 import paymentRoute from './routes/paymentRoute.js';
+import profileRouter from './routes/profileRoute.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
@@ -23,6 +24,7 @@ app.use(
 app.use('/api', authRoute);
 app.use('/api', handleImg);
 app.use('/api', paymentRoute);
+app.use('/api', profileRouter);
 
 app.get('/', (req, res) => {
 	res.send('Hello World my name is Sankalp');
