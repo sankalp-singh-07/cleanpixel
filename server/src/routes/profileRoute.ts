@@ -13,7 +13,7 @@ profileRouter.get('/users/:username', getPublicProfile);
 profileRouter.get('/profile', verifyAccessTokenMiddleware, getProfile);
 
 profileRouter.patch(
-	'/update-profile',
+	'/updateProfile',
 	verifyAccessTokenMiddleware,
 	updateProfile
 );
