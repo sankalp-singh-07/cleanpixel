@@ -1,11 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { GridHeader } from './GridHeader';
+import { useAuthStore } from '@/store/authStore';
 
 const Header = () => {
 	const navigate = useNavigate();
 
+	const isAuthed = useAuthStore((s) => s.isAuthenticated());
+
 	const handleGetStarted = () => {
 		navigate('/register');
+	};
+
+	const handleToUpload = () => {
+		navigate('/upload');
 	};
 
 	const handleBuyCredits = () => {
@@ -33,13 +40,25 @@ const Header = () => {
 				</p>
 
 				<div className="mt-10 flex flex-col gap-3 md:flex-row">
-					<button
-						className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-						aria-label="Get started for free"
-						onClick={handleGetStarted}
-					>
-						Get Started — For Free!
-					</button>
+					{isAuthed ? (
+						<>
+							<button
+								className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+								aria-label="Get started for free"
+								onClick={handleToUpload}
+							>
+								Start Uploading!
+							</button>
+						</>
+					) : (
+						<button
+							className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+							aria-label="Get started for free"
+							onClick={handleGetStarted}
+						>
+							Get Started — For Free!
+						</button>
+					)}
 
 					<button
 						className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-background px-6 py-3 text-base font-semibold text-primary transition hover:bg-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"

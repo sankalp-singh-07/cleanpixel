@@ -9,7 +9,7 @@ import * as folderService from '../lib/prisma';
 
 export const createFolderController = async (req: Request, res: Response) => {
 	try {
-		const userId = (req as any).userId as string;
+		const userId = req.userId;
 		if (!userId)
 			return res
 				.status(401)
@@ -19,7 +19,7 @@ export const createFolderController = async (req: Request, res: Response) => {
 		if (!parsed.success) {
 			return res
 				.status(400)
-				.json({ success: false, errors: parsed.error.flatten() });
+				.json({ success: false, errors: parsed.error });
 		}
 
 		const folder = await folderService.createFolder(userId, parsed.data);
@@ -38,7 +38,7 @@ export const listUserFoldersController = async (
 	res: Response
 ) => {
 	try {
-		const userId = (req as any).userId as string;
+		const userId = req.userId;
 		if (!userId)
 			return res
 				.status(401)
@@ -56,7 +56,7 @@ export const listUserFoldersController = async (
 
 export const updateFolderController = async (req: Request, res: Response) => {
 	try {
-		const userId = (req as any).userId as string;
+		const userId = req.userId;
 		const { folderId } = req.params;
 		if (!userId)
 			return res
@@ -76,7 +76,6 @@ export const updateFolderController = async (req: Request, res: Response) => {
 		);
 		return res.status(200).json({ success: true, data: updated });
 	} catch (err) {
-		console.error('updateFolderController:', err);
 		const message = err instanceof Error ? err.message : 'Server error';
 		if (message === 'Folder not found')
 			return res.status(404).json({ success: false, message });
@@ -88,7 +87,7 @@ export const updateFolderController = async (req: Request, res: Response) => {
 
 export const deleteFolderController = async (req: Request, res: Response) => {
 	try {
-		const userId = (req as any).userId as string;
+		const userId = req.userId;
 		const { folderId } = req.params;
 		if (!userId)
 			return res
@@ -151,7 +150,7 @@ export const getPublicFolderController = async (
 
 export const assignImageController = async (req: Request, res: Response) => {
 	try {
-		const userId = (req as any).userId as string;
+		const userId = req.userId;
 		if (!userId)
 			return res
 				.status(401)
@@ -161,7 +160,7 @@ export const assignImageController = async (req: Request, res: Response) => {
 		if (!parsed.success)
 			return res
 				.status(400)
-				.json({ success: false, errors: parsed.error.flatten() });
+				.json({ success: false, errors: parsed.error });
 
 		const updated = await folderService.assignImageToFolder(
 			parsed.data.imageId,
@@ -170,7 +169,6 @@ export const assignImageController = async (req: Request, res: Response) => {
 		);
 		return res.status(200).json({ success: true, data: updated });
 	} catch (err) {
-		console.error('assignImageController:', err);
 		const message = err instanceof Error ? err.message : 'Server error';
 		if (message === 'Image not found' || message === 'Folder not found')
 			return res.status(404).json({ success: false, message });
@@ -185,7 +183,7 @@ export const assignImageController = async (req: Request, res: Response) => {
 
 export const removeImageController = async (req: Request, res: Response) => {
 	try {
-		const userId = (req as any).userId as string;
+		const userId = req.userId;
 		if (!userId)
 			return res
 				.status(401)
@@ -203,7 +201,6 @@ export const removeImageController = async (req: Request, res: Response) => {
 		);
 		return res.status(200).json({ success: true, data: updated });
 	} catch (err) {
-		console.error('removeImageController:', err);
 		const message = err instanceof Error ? err.message : 'Server error';
 		if (message === 'Image not found')
 			return res.status(404).json({ success: false, message });
