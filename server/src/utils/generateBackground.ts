@@ -1,6 +1,6 @@
-const PEXELS_API_KEY = process.env.PEXELS_API_KEY;
+import { PEXELS_KEY } from './keys';
 
-if (!PEXELS_API_KEY) {
+if (!PEXELS_KEY) {
 	throw new Error(
 		'PEXELS_API_KEY is not set. Add it to your environment variables.'
 	);
@@ -73,7 +73,7 @@ export const generateBackgroundImage = async (
 	const res = await fetch(url.toString(), {
 		method: 'GET',
 		headers: {
-			Authorization: PEXELS_API_KEY,
+			Authorization: PEXELS_KEY,
 		},
 	});
 

@@ -9,7 +9,8 @@ if (
 	!process.env.REMOVE_BG_API_KEY ||
 	!process.env.RAZORPAY_KEY_ID ||
 	!process.env.RAZORPAY_KEY_SECRET ||
-	!process.env.CURRENCY
+	!process.env.CURRENCY ||
+	!process.env.PEXELS_API_KEY
 ) {
 	throw new Error('Secret keys are not defined in the environment variables');
 }
@@ -22,6 +23,7 @@ export const REMOVE_BG_SECRET = process.env.REMOVE_BG_API_KEY!;
 export const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID!;
 export const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET!;
 export const CURRENCY = process.env.CURRENCY!;
+export const PEXELS_KEY = process.env.PEXELS_API_KEY!;
 
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
