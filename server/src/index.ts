@@ -6,6 +6,7 @@ import profileRouter from './routes/profileRoute.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import folderRouter from './routes/folderRoute.js';
+import backgroundRouter from './routes/backgroundRoute.js';
 
 const app = express();
 app.use(express.json());
@@ -27,6 +28,7 @@ app.use('/api', handleImg);
 app.use('/api', paymentRoute);
 app.use('/api', profileRouter);
 app.use('/api', folderRouter);
+app.use('/api', backgroundRouter);
 
 app.get('/', (req, res) => {
 	res.send('Hello World my name is Sankalp');
