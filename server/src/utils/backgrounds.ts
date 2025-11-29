@@ -1,8 +1,11 @@
+import { ComposeOptions } from './composeBackgrounds';
+
 export type PredefinedBackground = {
 	id: string;
 	label: string;
 	imageUrl: string;
 	category: 'studio' | 'office' | 'outdoor' | 'abstract';
+	composeOptions?: ComposeOptions;
 };
 
 export const PREDEFINED_BACKGROUNDS: PredefinedBackground[] = [

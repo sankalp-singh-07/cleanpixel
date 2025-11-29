@@ -11,10 +11,11 @@ export const applyBackgroundController = async (
 		const userId = req.userId;
 		const { id } = req.params;
 
-		if (!userId)
+		if (!userId) {
 			return res
 				.status(401)
 				.json({ success: false, message: 'No user found' });
+		}
 		if (!validateId(userId) || !validateId(id)) {
 			return res
 				.status(400)

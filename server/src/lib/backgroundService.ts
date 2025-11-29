@@ -1,5 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { composeSubjectOnBackground } from '../utils/composeBackgrounds';
+import {
+	composeSubjectOnBackground,
+	ComposeOptions,
+} from '../utils/composeBackgrounds';
 import { generateBackgroundImage } from '../utils/generateBackground';
 import { getBackgroundById } from '../utils/backgrounds';
 import { checkCredits, deductCredit } from '../lib/prisma';
@@ -19,13 +22,12 @@ export const applyBackgroundService = async (params: {
 	const image = await client.userImage.findUnique({ where: { id: imageId } });
 	if (!image) throw new Error('Image not found');
 	if (image.userId !== userId) throw new Error('Unauthorized user');
-
-	if (!image.removedBgUrl) {
+	if (!image.removedBgUrl)
 		throw new Error('This image has no removed background yet');
-	}
 
 	let backgroundUrl: string;
 	let shouldDeductCredit = false;
+	let composeOptions: ComposeOptions | undefined;
 
 	if (mode === 'preset') {
 		if (!backgroundId)
@@ -33,6 +35,7 @@ export const applyBackgroundService = async (params: {
 		const bg = getBackgroundById(backgroundId);
 		if (!bg) throw new Error('Background not found');
 		backgroundUrl = bg.imageUrl;
+		composeOptions = bg.composeOptions ?? {};
 		shouldDeductCredit = false;
 	} else {
 		if (!prompt) throw new Error('prompt is required for generate mode');
@@ -41,12 +44,24 @@ export const applyBackgroundService = async (params: {
 		if (!hasCredits) throw new Error('Insufficient credits');
 
 		backgroundUrl = await generateBackgroundImage(prompt);
+		composeOptions = {
+			scale: 0.64,
+			bgBlur: 1.8,
+			subjectSaturation: 0.94,
+			subjectBrightness: 1.02,
+			addShadow: true,
+			shadowOffsetX: 7,
+			shadowOffsetY: 20,
+			shadowBlur: 24,
+			bottomMargin: 10,
+		};
 		shouldDeductCredit = true;
 	}
 
 	const composedBuffer = await composeSubjectOnBackground(
 		image.removedBgUrl,
-		backgroundUrl
+		backgroundUrl,
+		composeOptions
 	);
 
 	const uploadResult = await cloudinary.uploader.upload(

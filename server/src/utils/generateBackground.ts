@@ -80,7 +80,7 @@ export const generateBackgroundImage = async (
 	if (!res.ok) {
 		const text = await res.text();
 		console.error('Pexels API error:', res.status, text);
-		throw new Error(`Failed to fetch background from Pexels`);
+		throw new Error('Failed to fetch background from Pexels');
 	}
 
 	const data = (await res.json()) as { photos: PexelsPhoto[] };
