@@ -36,3 +36,25 @@ export const verifyAccessTokenMiddleware = (
 		return res.status(401).json({ message: 'Invalid or expired token' });
 	}
 };
+
+export const optionalAccessTokenMiddleware = (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const authHeader = req.headers.authorization;
+		if (authHeader && authHeader.startsWith('Bearer ')) {
+			const token = authHeader.split(' ')[1];
+			const decode = verifyAccessToken(token) as { id: string };
+			if (decode?.id) {
+				req.userId = decode.id;
+				console.log('✅ User authenticated (optional):', decode.id);
+			}
+		}
+		next();
+	} catch (error) {
+		// Proceed without req.userId if verification fails or token is invalid
+		next();
+	}
+};

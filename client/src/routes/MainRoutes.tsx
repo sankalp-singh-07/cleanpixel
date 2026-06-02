@@ -19,6 +19,7 @@ import Folders from '@/pages/Folders';
 import FolderDetail from '@/pages/FolderDetail';
 import PublicProfile from '@/pages/PublicProfile';
 import PublicFolder from '@/pages/PublicFolder';
+import ImageDetail from '@/pages/ImageDetail';
 import TestAddToFolderModal from '@/pages/TestAddToFolderModal';
 import TestBackgroundModal from '@/pages/TestBackgroundModal';
 
@@ -90,6 +91,7 @@ const MainRoutes = () => {
 				{/* Public Routes */}
 				<Route path="u/:username" element={<PublicProfile />} />
 				<Route path="u/:username/folder/:folderId" element={<PublicFolder />} />
+				<Route path="images/:imageId" element={<ImageDetail />} />
 				<Route path="contact" element={<Contact />} />
 				<Route path="about" element={<About />} />
 				<Route path="testimonials" element={<TestimonialsPage />} />

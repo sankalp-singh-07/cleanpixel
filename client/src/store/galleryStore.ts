@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { getGallery } from '@/api/image';
+import { toggleImageVisibility as toggleImageVisibilityApi } from '@/api/profile';
 import type { ImageItem } from '@/types/uploadTypes';
 
 type GalleryStore = {
@@ -20,6 +21,7 @@ type GalleryStore = {
 			limit: number;
 		}>
 	) => Promise<void>;
+	toggleImageVisibility: (imageId: string) => Promise<void>;
 };
 
 export const useGalleryStore = create<GalleryStore>((set, get) => ({
@@ -65,6 +67,20 @@ export const useGalleryStore = create<GalleryStore>((set, get) => ({
 			set({ error: err.message });
 		} finally {
 			set({ loading: false });
+		}
+	},
+
+	toggleImageVisibility: async (imageId: string) => {
+		try {
+			const result = await toggleImageVisibilityApi(imageId);
+			set((state) => ({
+				images: state.images.map((img) =>
+					img.id === imageId ? { ...img, isPublic: result.isPublic } : img
+				),
+			}));
+		} catch (err: any) {
+			set({ error: err.response?.data?.message || err.message });
+			throw err;
 		}
 	},
 }));

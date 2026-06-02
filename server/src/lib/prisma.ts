@@ -479,3 +479,19 @@ export const toggleImageVisibility = async (imageId: string, userId: string) => 
 		data: { isPublic: !image.isPublic },
 	});
 };
+
+export const getImageDetail = async (imageId: string) => {
+	return await client.userImage.findUnique({
+		where: { id: imageId },
+		include: {
+			user: {
+				select: {
+					username: true,
+					name: true,
+					avatarUrl: true,
+					publicProfile: true,
+				},
+			},
+		},
+	});
+};

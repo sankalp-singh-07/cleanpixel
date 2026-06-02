@@ -8,6 +8,7 @@ import {
 	toggleImageVisibility,
 	updateRemovedBgImg,
 	userImageUpload,
+	getImageDetail,
 } from '../lib/prisma';
 import { removeImg } from '../utils/removeImg';
 import fs from 'node:fs';
@@ -176,5 +177,44 @@ export const toggleImageVisibilityController = async (
 		if (message === 'Not authorized')
 			return res.status(403).json({ success: false, message });
 		return res.status(500).json({ success: false, message });
+	}
+};
+
+export const getImageDetailController = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		const userId = req.userId; // Defined if user is authenticated (optional)
+
+		if (!validateId(id)) {
+			return res
+				.status(400)
+				.json({ success: false, message: 'Invalid ID format' });
+		}
+
+		const image = await getImageDetail(id);
+
+		if (!image) {
+			return res
+				.status(404)
+				.json({ success: false, message: 'Image not found' });
+		}
+
+		const isOwner = userId === image.userId;
+
+		if (!image.isPublic && !isOwner) {
+			return res
+				.status(403)
+				.json({ success: false, message: 'This image is private' });
+		}
+
+		return res.status(200).json({
+			success: true,
+			data: image,
+		});
+	} catch (err) {
+		console.error('getImageDetailController:', err);
+		return res
+			.status(500)
+			.json({ success: false, message: 'Server error' });
 	}
 };

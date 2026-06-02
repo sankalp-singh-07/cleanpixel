@@ -1,11 +1,12 @@
 import express from 'express';
 import { upload } from '../middlewares/multer';
-import { verifyAccessTokenMiddleware } from '../middlewares/verifyTokenMiddleware';
+import { verifyAccessTokenMiddleware, optionalAccessTokenMiddleware } from '../middlewares/verifyTokenMiddleware';
 import {
 	galleryController,
 	removeImageController,
 	toggleImageVisibilityController,
 	uploadImageController,
+	getImageDetailController,
 } from '../controllers/handleImgController';
 const handleImg = express.Router();
 
@@ -29,6 +30,13 @@ handleImg.patch(
 	'/images/:id/visibility',
 	verifyAccessTokenMiddleware,
 	toggleImageVisibilityController
+);
+
+// GET /api/images/:id - Get single image details (with optional auth)
+handleImg.get(
+	'/images/:id',
+	optionalAccessTokenMiddleware,
+	getImageDetailController
 );
 
 export default handleImg;

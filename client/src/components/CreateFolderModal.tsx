@@ -128,8 +128,8 @@ const CreateFolderModal = ({ isOpen, onClose, onSubmit, folder, loading }: Props
 							}`}
 						>
 							<span
-								className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
-									isPublic ? 'translate-x-7' : 'translate-x-1'
+								className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${
+									isPublic ? 'translate-x-6' : 'translate-x-0'
 								}`}
 							/>
 						</button>

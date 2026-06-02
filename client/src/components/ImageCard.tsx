@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Download, Eye, EyeOff, Wand2, FolderPlus, Trash2, MoreVertical } from 'lucide-react';
+import { Download, Eye, EyeOff, Wand2, FolderPlus, Trash2, MoreVertical, Share2 } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 type ImageData = {
 	id: string;
@@ -136,6 +137,28 @@ const ImageCard = ({
 											)}
 										</button>
 									)}
+
+									<button
+										onClick={async (e) => {
+											e.stopPropagation();
+											const shareUrl = `${window.location.origin}/images/${image.id}`;
+											try {
+												await navigator.clipboard.writeText(shareUrl);
+												if (image.isPublic) {
+													toast.success('Link copied to clipboard!');
+												} else {
+													toast.info('Link copied! Note: This image is private. Make it public so others can view it.');
+												}
+											} catch (err) {
+												toast.error('Failed to copy link.');
+											}
+											setShowMenu(false);
+										}}
+										className="w-full px-3 py-2 text-left text-sm text-foreground hover:bg-secondary flex items-center gap-2"
+									>
+										<Share2 className="w-4 h-4" />
+										Share Link
+									</button>
 									{showFolderActions && !isInFolder && onAddToFolder && (
 										<button
 											onClick={() => {

@@ -12,7 +12,7 @@ import type { ImageItem } from '@/types/uploadTypes';
 import type { CreateFolderPayload, UpdateFolderPayload } from '@/types/folderTypes';
 
 const ShowGallery = () => {
-	const { images, loading, error, fetchGallery, sort, page, limit, hasMore } =
+	const { images, loading, error, fetchGallery, sort, page, limit, hasMore, toggleImageVisibility } =
 		useGalleryStore();
 	const { createFolder } = useFolderStore();
 
@@ -53,6 +53,15 @@ const ShowGallery = () => {
 	const handleAddToFolder = (imageId: string) => {
 		setImageForFolder(imageId);
 		setShowAddToFolderModal(true);
+	};
+
+	const handleToggleImageVisibility = async (imageId: string) => {
+		try {
+			await toggleImageVisibility(imageId);
+			toast.success('Image visibility updated');
+		} catch (err: any) {
+			toast.error(err.message || 'Failed to update visibility');
+		}
 	};
 
 	const handleCreateFolder = async (
@@ -157,6 +166,8 @@ const ShowGallery = () => {
 							onApplyBackground={() => handleApplyBackground(img)}
 							onAddToFolder={() => handleAddToFolder(img.id)}
 							showFolderActions={true}
+							showVisibilityToggle={true}
+							onToggleVisibility={() => handleToggleImageVisibility(img.id)}
 						/>
 					))}
 				</div>
