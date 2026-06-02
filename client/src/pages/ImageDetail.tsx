@@ -181,21 +181,15 @@ const ImageDetail = () => {
 						<ArrowLeft className="w-4 h-4" />
 						Back to Home
 					</Link>
-					<span
-						className={`text-xs font-semibold px-3.5 py-1.5 rounded-full shadow-sm border ${
-							image.isPublic
-								? 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20'
-								: 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20'
-						}`}
-					>
-						{image.isPublic ? 'Public Image' : 'Private View (Owner)'}
+					<span className="text-xs font-semibold px-3.5 py-1.5 rounded-full shadow-sm border bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20">
+						Public Image
 					</span>
 				</div>
 
 				<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 					{/* Image Preview Container */}
 					<div className="lg:col-span-7 flex flex-col gap-4">
-						<div className="relative bg-secondary/35 backdrop-blur-md border border-border/50 rounded-3xl p-4 shadow-2xl flex items-center justify-center overflow-hidden aspect-[4/5] group">
+						<div className="relative w-full bg-secondary/35 backdrop-blur-md border border-border/50 rounded-3xl p-4 shadow-2xl flex items-center justify-center overflow-hidden aspect-[4/5] group">
 							<div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-transparent opacity-40" />
 							<div
 								className={`w-full h-full rounded-2xl overflow-hidden flex items-center justify-center relative ${
@@ -212,7 +206,7 @@ const ImageDetail = () => {
 
 						{/* Version Toggles if multiple exist */}
 						{(hasRemovedBg || hasReplacedBg) && (
-							<div className="flex justify-center p-1.5 bg-secondary/40 border border-border/50 rounded-full backdrop-blur-sm shadow-md">
+							<div className="flex flex-wrap justify-center gap-2 p-1.5 bg-secondary/40 border border-border/50 rounded-full backdrop-blur-sm shadow-md">
 								<button
 									onClick={() => setViewMode('original')}
 									className={`px-4 py-2 text-xs font-semibold rounded-full transition-all duration-200 ${

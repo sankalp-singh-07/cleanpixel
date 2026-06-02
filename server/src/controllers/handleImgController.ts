@@ -199,9 +199,7 @@ export const getImageDetailController = async (req: Request, res: Response) => {
 				.json({ success: false, message: 'Image not found' });
 		}
 
-		const isOwner = userId === image.userId;
-
-		if (!image.isPublic && !isOwner) {
+		if (!image.isPublic) {
 			return res
 				.status(403)
 				.json({ success: false, message: 'This image is private' });
