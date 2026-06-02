@@ -1,4 +1,3 @@
-import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import PictureGallery from '@/components/PictureGallery';
 import RemoveBtnPart from '@/components/RemoveBtnPart';
@@ -12,7 +11,7 @@ const Home = () => {
 			<Testimonials />
 			<PictureGallery />
 			<RemoveBtnPart />
-			<Footer />
+			
 		</>
 	);
 };

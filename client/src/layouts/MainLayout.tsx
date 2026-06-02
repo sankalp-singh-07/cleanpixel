@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { useAuthStore } from '@/store/authStore';
 import { useCreditStore } from '@/store/creditStore';
 import { useEffect } from 'react';
@@ -19,6 +20,8 @@ export default function MainLayout() {
 			<main>
 				<Outlet />
 			</main>
+
+			<Footer />
 		</div>
 	);
 }
