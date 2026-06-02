@@ -4,6 +4,7 @@ import { verifyAccessTokenMiddleware } from '../middlewares/verifyTokenMiddlewar
 import {
 	galleryController,
 	removeImageController,
+	toggleImageVisibilityController,
 	uploadImageController,
 } from '../controllers/handleImgController';
 const handleImg = express.Router();
@@ -22,5 +23,12 @@ handleImg.post(
 );
 
 handleImg.get('/gallery', verifyAccessTokenMiddleware, galleryController);
+
+// PATCH /api/images/:id/visibility - Toggle image public/private visibility
+handleImg.patch(
+	'/images/:id/visibility',
+	verifyAccessTokenMiddleware,
+	toggleImageVisibilityController
+);
 
 export default handleImg;

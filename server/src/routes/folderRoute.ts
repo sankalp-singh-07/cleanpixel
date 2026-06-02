@@ -19,17 +19,8 @@ folderRouter.get(
 	verifyAccessTokenMiddleware,
 	folderCtrl.listUserFoldersController
 );
-folderRouter.patch(
-	'/folders/:folderId',
-	verifyAccessTokenMiddleware,
-	folderCtrl.updateFolderController
-);
-folderRouter.delete(
-	'/folders/:folderId',
-	verifyAccessTokenMiddleware,
-	folderCtrl.deleteFolderController
-);
 
+// Static routes must come before parameterized routes
 folderRouter.post(
 	'/folders/assign-image',
 	verifyAccessTokenMiddleware,
@@ -39,6 +30,23 @@ folderRouter.patch(
 	'/folders/remove-image/:imageId',
 	verifyAccessTokenMiddleware,
 	folderCtrl.removeImageController
+);
+
+// Parameterized folder routes
+folderRouter.get(
+	'/folders/:folderId',
+	verifyAccessTokenMiddleware,
+	folderCtrl.getFolderController
+);
+folderRouter.patch(
+	'/folders/:folderId',
+	verifyAccessTokenMiddleware,
+	folderCtrl.updateFolderController
+);
+folderRouter.delete(
+	'/folders/:folderId',
+	verifyAccessTokenMiddleware,
+	folderCtrl.deleteFolderController
 );
 
 export default folderRouter;

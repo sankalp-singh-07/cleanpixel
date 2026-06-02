@@ -10,13 +10,13 @@ import {
 	DropdownMenuShortcut,
 } from '@/components/ui/dropdown-menu';
 import {
-	ArrowRightIcon,
 	DollarSign,
 	Home,
 	Image,
 	Menu,
 	Upload,
 	User,
+	FolderOpen,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import useAuth from '@/hooks/useAuth';
@@ -126,13 +126,25 @@ export function DropdownMenuComponent({ open, onOpenChange }: Props) {
 					<DropdownMenuGroup>
 						<DropdownMenuItem asChild className={itemWrap}>
 							<Link
-								to="/invite"
+								to="/folders"
 								onClick={() => onOpenChange(false)}
 								className={linkBase}
 							>
-								Invite Users
+								Folders
 								<DropdownMenuShortcut>
-									<ArrowRightIcon />
+									<FolderOpen />
+								</DropdownMenuShortcut>
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem asChild className={itemWrap}>
+							<Link
+								to="/profile"
+								onClick={() => onOpenChange(false)}
+								className={linkBase}
+							>
+								Profile
+								<DropdownMenuShortcut>
+									<User />
 								</DropdownMenuShortcut>
 							</Link>
 						</DropdownMenuItem>

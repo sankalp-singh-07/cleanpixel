@@ -4,7 +4,9 @@ import {
 	getProfile,
 	updateProfile,
 	getPublicProfile,
+	uploadAvatar,
 } from '../controllers/profileController';
+import { upload } from '../middlewares/multer';
 
 const profileRouter = express.Router();
 
@@ -16,6 +18,13 @@ profileRouter.patch(
 	'/updateProfile',
 	verifyAccessTokenMiddleware,
 	updateProfile
+);
+
+profileRouter.patch(
+	'/profile/avatar',
+	verifyAccessTokenMiddleware,
+	upload.single('avatar'),
+	uploadAvatar
 );
 
 export default profileRouter;

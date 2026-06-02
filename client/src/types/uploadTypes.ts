@@ -14,8 +14,12 @@ export type RemoveImgType = {
 export type ImageItem = {
 	id: string;
 	userId: string;
+	folderId?: string | null;
 	originalUrl: string;
 	removedBgUrl?: string | null;
+	replacedUrl?: string | null;
+	isPublic?: boolean;
+	type?: string | null;
 	createdAt: string;
 };
 

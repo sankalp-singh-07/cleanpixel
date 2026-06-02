@@ -4,6 +4,7 @@ import {
 	getUserProfile,
 	updateUserProfile,
 } from '../lib/prisma';
+import { ProfileUpdateSchema } from '../types/profileTypes';
 
 export const getPublicProfile = async (req: Request, res: Response) => {
 	try {
@@ -66,31 +67,16 @@ export const updateProfile = async (req: Request, res: Response) => {
 				.status(401)
 				.json({ success: false, message: 'Unauthorized' });
 
-		const { name, bio, avatarUrl, publicProfile } = req.body;
+		const parsed = ProfileUpdateSchema.safeParse(req.body);
+		if (!parsed.success) {
+			return res.status(400).json({
+				success: false,
+				message: 'Validation failed',
+				errors: parsed.error.flatten(),
+			});
+		}
 
-		if (name && typeof name !== 'string')
-			return res
-				.status(400)
-				.json({ success: false, message: 'Invalid name' });
-		if (bio && typeof bio !== 'string')
-			return res
-				.status(400)
-				.json({ success: false, message: 'Invalid bio' });
-		if (avatarUrl && typeof avatarUrl !== 'string')
-			return res
-				.status(400)
-				.json({ success: false, message: 'Invalid avatarUrl' });
-		if (publicProfile !== undefined && typeof publicProfile !== 'boolean')
-			return res
-				.status(400)
-				.json({ success: false, message: 'Invalid publicProfile' });
-
-		const updatedUser = await updateUserProfile(userId, {
-			name,
-			bio,
-			avatarUrl,
-			publicProfile,
-		});
+		const updatedUser = await updateUserProfile(userId, parsed.data);
 
 		return res.status(200).json({ success: true, data: updatedUser });
 	} catch (err) {
@@ -98,5 +84,32 @@ export const updateProfile = async (req: Request, res: Response) => {
 		return res
 			.status(500)
 			.json({ success: false, message: 'Internal Server Error' });
+	}
+};
+
+export const uploadAvatar = async (req: Request, res: Response) => {
+	try {
+		const userId = req.userId;
+		if (!userId)
+			return res
+				.status(401)
+				.json({ success: false, message: 'Unauthorized' });
+
+		if (!req.file?.path) {
+			return res
+				.status(400)
+				.json({ success: false, message: 'Avatar image is required' });
+		}
+
+		const updatedUser = await updateUserProfile(userId, {
+			avatarUrl: req.file.path,
+		});
+
+		return res.status(200).json({ success: true, data: updatedUser });
+	} catch (err) {
+		console.error('uploadAvatar:', err);
+		return res
+			.status(500)
+			.json({ success: false, message: 'Avatar upload failed' });
 	}
 };

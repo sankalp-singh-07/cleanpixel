@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DropdownMenuComponent } from '../ui/DropdownMenu';
-import { Home, Image, LogOut, Upload } from 'lucide-react';
+import { Home, Image, LogOut, Upload, FolderOpen, User } from 'lucide-react';
 import useAuth from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/authStore';
 import DarkModeToggle from './DarkButton';
 import { Spinner } from './Spinner';
 import ShowCredits from './ShowCredits';
-// import ShowCredits from './ShowCredits';
 
 const linkBase =
 	'text-foreground/80 hover:text-primary/80 transition-colors px-3 py-2 rounded-lg flex items-center gap-2';
@@ -97,6 +96,28 @@ const Navbar = () => {
 							<Upload className="w-4 h-4" />
 							Upload
 						</NavLink>
+						{isAuthed && (
+							<>
+								<NavLink
+									to="/folders"
+									className={({ isActive }) =>
+										`${linkBase} ${isActive ? activeLink : ''}`
+									}
+								>
+									<FolderOpen className="w-4 h-4" />
+									Folders
+								</NavLink>
+								<NavLink
+									to="/profile"
+									className={({ isActive }) =>
+										`${linkBase} ${isActive ? activeLink : ''}`
+									}
+								>
+									<User className="w-4 h-4" />
+									Profile
+								</NavLink>
+							</>
+						)}
 					</nav>
 
 					<div className="flex items-center gap-2">

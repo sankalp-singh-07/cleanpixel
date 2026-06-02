@@ -276,8 +276,8 @@ export const updateUserProfile = async (
 	userId: string,
 	data: {
 		name?: string;
-		bio?: string;
-		avatarUrl?: string;
+		bio?: string | null;
+		avatarUrl?: string | null;
 		publicProfile?: boolean;
 	}
 ) => {
@@ -329,6 +329,19 @@ export const getFolderByIdForOwner = async (
 	const folder = await client.folder.findUnique({
 		where: { id: folderId },
 		include: { images: true },
+	});
+	if (!folder) throw new Error('Folder not found');
+	if (folder.userId !== userId) throw new Error('Not authorized');
+	return folder;
+};
+
+export const getFolderWithImages = async (folderId: string, userId: string) => {
+	const folder = await client.folder.findUnique({
+		where: { id: folderId },
+		include: {
+			images: { orderBy: { createdAt: 'desc' } },
+			_count: { select: { images: true } },
+		},
 	});
 	if (!folder) throw new Error('Folder not found');
 	if (folder.userId !== userId) throw new Error('Not authorized');
@@ -453,5 +466,16 @@ export const removeImageFromFolder = async (
 	return client.userImage.update({
 		where: { id: imageId },
 		data: { folderId: null },
+	});
+};
+
+export const toggleImageVisibility = async (imageId: string, userId: string) => {
+	const image = await client.userImage.findUnique({ where: { id: imageId } });
+	if (!image) throw new Error('Image not found');
+	if (image.userId !== userId) throw new Error('Not authorized');
+
+	return client.userImage.update({
+		where: { id: imageId },
+		data: { isPublic: !image.isPublic },
 	});
 };

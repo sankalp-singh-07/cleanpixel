@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 type Testimonial = {
   text: string;
@@ -147,8 +148,8 @@ const Testimonials: React.FC = () => {
           ))}
         </div>
 
-        <a
-          href="/testimonials"
+        <Link
+          to="/testimonials"
           className="mt-16 inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 hover:gap-3 group"
           style={{ 
             color: 'var(--text)',
@@ -164,7 +165,7 @@ const Testimonials: React.FC = () => {
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
-        </a>
+        </Link>
       </div>
     </section>
   );

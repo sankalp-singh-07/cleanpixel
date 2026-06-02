@@ -5,6 +5,7 @@ import {
 	deductCredit,
 	fetchGallery,
 	fetchOgImg,
+	toggleImageVisibility,
 	updateRemovedBgImg,
 	userImageUpload,
 } from '../lib/prisma';
@@ -137,5 +138,43 @@ export const galleryController = async (req: Request, res: Response) => {
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Failed to get images', error });
+	}
+};
+
+export const toggleImageVisibilityController = async (
+	req: Request,
+	res: Response
+) => {
+	try {
+		const userId = req.userId;
+		const { id } = req.params;
+
+		if (!userId) {
+			return res
+				.status(401)
+				.json({ success: false, message: 'Unauthorized' });
+		}
+
+		if (!validateId(userId) || !validateId(id)) {
+			return res
+				.status(400)
+				.json({ success: false, message: 'Invalid ID format' });
+		}
+
+		const updatedImage = await toggleImageVisibility(id, userId);
+
+		return res.status(200).json({
+			success: true,
+			message: `Image visibility set to ${updatedImage.isPublic ? 'public' : 'private'}`,
+			data: updatedImage,
+		});
+	} catch (err) {
+		console.error('toggleImageVisibilityController:', err);
+		const message = err instanceof Error ? err.message : 'Server error';
+		if (message === 'Image not found')
+			return res.status(404).json({ success: false, message });
+		if (message === 'Not authorized')
+			return res.status(403).json({ success: false, message });
+		return res.status(500).json({ success: false, message });
 	}
 };

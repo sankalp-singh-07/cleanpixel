@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { uploadImage, removeImage } from '@/api/image';
 import { showToast } from './Toast';
 import { useCreditStore } from '@/store/creditStore';
@@ -20,6 +20,15 @@ export default function UploadWidget() {
 	const [imageId, setImageId] = useState<string | null>(null);
 
 	const abortRef = useRef<AbortController | null>(null);
+	const location = useLocation();
+	const initialFileRef = useRef<File | null>(
+		location.state &&
+			typeof location.state === 'object' &&
+			'file' in location.state &&
+			location.state.file instanceof File
+			? location.state.file
+			: null
+	);
 
 	const { credits, loading: creditsLoading } = useCreditStore();
 	const setCredits = useCreditStore((s) => s.setFromServer);
@@ -53,16 +62,13 @@ export default function UploadWidget() {
 		setWasCanceled(false);
 	}, [preview]);
 
-	const onFiles = useCallback(
-		(files: FileList | null) => {
-			if (!files || files.length === 0) return;
-
+	const selectFile = useCallback(
+		(f: File) => {
 			if (!creditsLoading && (credits ?? 0) <= 0) {
 				redirectToPricing();
 				return;
 			}
 
-			const f = files[0];
 			if (!f.type.startsWith('image/')) {
 				setError('Please select an image file (PNG/JPG/WebP).');
 				return;
@@ -80,6 +86,21 @@ export default function UploadWidget() {
 		},
 		[credits, creditsLoading, redirectToPricing, preview]
 	);
+
+	const onFiles = useCallback(
+		(files: FileList | null) => {
+			if (!files || files.length === 0) return;
+			selectFile(files[0]);
+		},
+		[selectFile]
+	);
+
+	useEffect(() => {
+		const initialFile = initialFileRef.current;
+		if (!initialFile) return;
+		initialFileRef.current = null;
+		selectFile(initialFile);
+	}, [selectFile]);
 
 	const onDrop = useCallback(
 		(e: React.DragEvent<HTMLDivElement>) => {

@@ -1,11 +1,14 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const RemoveBtnPart: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [error, setError] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
   const maxFileSize = 10 * 1024 * 1024; 
@@ -29,13 +32,8 @@ const RemoveBtnPart: React.FC = () => {
       reader.onload = (e) => {
         const result = e.target?.result as string;
         setSelectedImage(result);
+        setSelectedFile(file);
         setFileName(file.name);
-        
-        // Here you would typically:
-        // 1. Upload to your backend API
-        // 2. Process the image
-        // 3. Navigate to results page
-        console.log("Image loaded:", file.name, "Size:", file.size);
       };
       reader.readAsDataURL(file);
     }
@@ -73,6 +71,11 @@ const RemoveBtnPart: React.FC = () => {
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleContinue = () => {
+    if (!selectedFile) return;
+    navigate('/upload', { state: { file: selectedFile } });
   };
 
   const handlePaste = async (e: React.ClipboardEvent<HTMLDivElement>) => {
@@ -158,8 +161,9 @@ const RemoveBtnPart: React.FC = () => {
         )}
 
         <button
+          type="button"
           onClick={handleUploadClick}
-          className="px-8 py-3 rounded-full font-semibold text-white text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          className="cursor-pointer px-8 py-3 rounded-full font-semibold text-white text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
           style={{ backgroundColor: 'var(--primary)' }}
         >
           {selectedImage ? "Upload Another" : "Upload Image"}
@@ -169,13 +173,14 @@ const RemoveBtnPart: React.FC = () => {
           or drop a file, <br />
           <span className="text-xs flex items-center justify-center gap-1">
             paste image or{" "}
-            <p 
+            <button
+              type="button"
               onClick={handleURLSubmit}
-              className="cursor-pointer underline hover:no-underline"
+              className="cursor-pointer bg-transparent p-0 text-xs font-normal underline shadow-none hover:no-underline"
               style={{ color: 'var(--primary)' }}
             >
               URL
-            </p>
+            </button>
           </span>
         </p>
 
@@ -202,24 +207,30 @@ const RemoveBtnPart: React.FC = () => {
 
       {selectedImage && (
         <div 
-          className="mt-4 p-4 rounded-lg text-sm max-w-lg w-full"
-          style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}
+          className="mt-4 w-full max-w-lg rounded-lg border border-emerald-900/20 bg-emerald-100 p-4 text-sm text-emerald-950 dark:border-emerald-950/50 dark:bg-emerald-200 dark:text-emerald-950"
         >
           <p className="font-semibold mb-1">✓ Image loaded successfully!</p>
-          <p className="text-xs opacity-80">Ready to process. Click the button below to continue.</p>
+          <p className="text-xs opacity-80">Ready to process.</p>
+          <button
+            type="button"
+            onClick={handleContinue}
+            className="mt-3 cursor-pointer rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary/90"
+          >
+            Remove background
+          </button>
         </div>
       )}
 
       <div className="text-center mt-6 text-sm max-w-md" style={{ color: 'var(--text)', opacity: 0.6 }}>
         <p className="text-xs">
           By uploading an image or URL you agree to our{" "}
-          <a href="#" className="underline hover:no-underline" style={{ color: 'var(--primary)' }}>
+          <Link to="/terms" className="underline hover:no-underline" style={{ color: 'var(--primary)' }}>
             Terms of Service
-          </a>
+          </Link>
           . To learn more about how we handle your personal data, check our{" "}
-          <a href="#" className="underline hover:no-underline" style={{ color: 'var(--primary)' }}>
+          <Link to="/privacy" className="underline hover:no-underline" style={{ color: 'var(--primary)' }}>
             Privacy Policy
-          </a>
+          </Link>
           .
         </p>
       </div>

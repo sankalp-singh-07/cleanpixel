@@ -77,11 +77,17 @@
   a:hover { color: var(--accent); }
 
   button {
-    @apply inline-flex items-center justify-center px-6 pt-2 pb-2.5 bg-primary text-white shadow-sm cursor-pointer text-lg font-semibold;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    font: inherit;
   }
 
-  button:hover { background-color: var(--accent); }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
 
   input, textarea, select {
     @apply border border-border rounded-md px-3 py-2 bg-background text-foreground;
