@@ -8,7 +8,7 @@ const stories = [
 		name: 'Marc Cohen',
 		role: 'CEO',
 		company: 'Phoenix Trading',
-		image: '/cat2.jpeg',
+		image: '/cat1.jpg',
 		metric: '4x faster listings',
 	},
 	{
@@ -17,7 +17,7 @@ const stories = [
 		name: 'Emil Barsø Rheinlænder',
 		role: 'Content & Marketing Coordinator',
 		company: 'Sony Music',
-		image: '/cat1.jpg',
+		image: '/cat2.jpeg',
 		metric: '60% less edit time',
 	},
 	{
@@ -26,8 +26,53 @@ const stories = [
 		name: 'Taylor Hatmaker',
 		role: 'Senior Technology Editor',
 		company: 'TechCrunch',
-		image: '/person.avif',
+		image: '/cat3.avif',
 		metric: 'Cleaner cutouts',
+	},
+	{
+		quote:
+			'I use CleanPixel daily for my online shop. It turns snapshots into professional product listings in a second.',
+		name: 'Sarah Jenkins',
+		role: 'E-commerce Manager',
+		company: 'StyleBoutique',
+		image: '/cat4.avif',
+		metric: '90% listing efficiency boost',
+	},
+	{
+		quote:
+			'As a designer, cutting hair out of photos was my worst nightmare. CleanPixel does in 2 seconds what used to take me 20 minutes.',
+		name: 'David Chen',
+		role: 'Lead Visual Designer',
+		company: 'PixelCraft Agency',
+		image: '/cat5.avif',
+		metric: 'Saved 15+ hours weekly',
+	},
+	{
+		quote:
+			'The API is incredibly fast and reliable. We integrated background removal directly into our user onboarding flow.',
+		name: 'Elena Rostova',
+		role: 'CTO',
+		company: 'SaaSify Solutions',
+		image: '/cat6.avif',
+		metric: 'Sub-second API response',
+	},
+	{
+		quote:
+			'No more manually editing thousands of car photos. CleanPixel handles reflections and tricky window borders flawlessly.',
+		name: 'Marcus Vance',
+		role: 'Operations Director',
+		company: 'Vance Auto Group',
+		image: '/cat7.avif',
+		metric: '2,500+ images processed daily',
+	},
+	{
+		quote:
+			'Our marketing creatives need clean transparent cutouts of public figures. CleanPixel is the only tool that gets it right every single time.',
+		name: 'Aisha Rahman',
+		role: 'Social Media Director',
+		company: 'PR Connect',
+		image: '/cat8.avif',
+		metric: 'Instant campaign turnaround',
 	},
 ];
 
@@ -69,7 +114,7 @@ const TestimonialsPage = () => {
 			</section>
 
 			<section className="px-4 py-16 sm:px-6 lg:px-8">
-				<div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-3">
+				<div className="mx-auto grid max-w-7xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
 					{stories.map((story) => (
 						<article
 							key={story.name}

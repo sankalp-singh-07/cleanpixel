@@ -139,7 +139,7 @@ const Navbar = () => {
 							) : (
 								<span
 									onClick={handleLogout}
-									className="rounded-3xl px-5 py-2 text-base dark:text-white shadow-sm text-primary cursor-pointer"
+									className="rounded-full p-2 dark:text-white text-primary cursor-pointer hover:bg-secondary transition-colors flex items-center justify-center"
 									aria-busy={loggingOut}
 								>
 									{loggingOut ? (

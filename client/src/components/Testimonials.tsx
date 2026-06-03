@@ -28,7 +28,7 @@ const testimonials: Testimonial[] = [
     text: "We were impressed by its ability to account for pesky, feathery hair without making an image look jagged and amateurish.",
     name: "Taylor Hatmaker",
     role: "Senior Technology Editor",
-    image: "/cat1.jpg",
+    image: "/cat3.avif",
     company: "TechCrunch",
   },
 ];
