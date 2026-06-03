@@ -1,6 +1,32 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import api from '@/api';
+import { toast } from 'react-toastify';
 
 const Footer = () => {
+	const [email, setEmail] = useState('');
+	const [subscribing, setSubscribing] = useState(false);
+
+	const handleSubscribe = async (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!email.trim()) {
+			toast.error('Please enter a valid email address.');
+			return;
+		}
+
+		setSubscribing(true);
+		try {
+			const res = await api.post('/subscribe', { email: email.trim() });
+			toast.success(res.data.message || 'Subscribed successfully!');
+			setEmail('');
+		} catch (error: any) {
+			const errMsg = error.response?.data?.message || 'Subscription failed. Please try again.';
+			toast.error(errMsg);
+		} finally {
+			setSubscribing(false);
+		}
+	};
+
 	return (
 		<footer className="bg-secondary text-foreground border-t border-border mt-32">
 			<div className="max-w-4xl mx-auto px-6 py-12 text-center">
@@ -14,18 +40,23 @@ const Footer = () => {
 
 				<form
 					className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto"
-					onSubmit={(e) => e.preventDefault()}
+					onSubmit={handleSubscribe}
 				>
 					<input
 						type="email"
 						placeholder="Enter your email"
-						className="w-full sm:w-auto flex-1 rounded-full border border-border bg-background px-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						disabled={subscribing}
+						required
+						className="w-full sm:w-auto flex-1 rounded-full border border-border bg-background px-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50"
 					/>
 					<button
 						type="submit"
-						className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white transition hover:bg-primary/90"
+						disabled={subscribing}
+						className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
 					>
-						Subscribe
+						{subscribing ? 'Subscribing...' : 'Subscribe'}
 					</button>
 				</form>
 			</div>

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Mail, Phone, MessageCircle, Send, Clock } from 'lucide-react';
+import api from '@/api';
+import { toast } from 'react-toastify';
 
 const ContactUs = () => {
 	const [formData, setFormData] = useState({
@@ -9,6 +11,7 @@ const ContactUs = () => {
 		subject: '',
 		message: '',
 	});
+	const [sending, setSending] = useState(false);
 
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -19,25 +22,34 @@ const ContactUs = () => {
 		}));
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		if (
 			!formData.name ||
 			!formData.email ||
 			!formData.subject ||
 			!formData.message
 		) {
-			alert('Please fill in all required fields');
+			toast.error('Please fill in all required fields');
 			return;
 		}
-		console.log('Form submitted:', formData);
-		alert("Thank you for your message! We'll get back to you soon.");
-		setFormData({
-			name: '',
-			phone: '',
-			email: '',
-			subject: '',
-			message: '',
-		});
+
+		setSending(true);
+		try {
+			const res = await api.post('/contact', formData);
+			toast.success(res.data.message || "Thank you! We've received your message.");
+			setFormData({
+				name: '',
+				phone: '',
+				email: '',
+				subject: '',
+				message: '',
+			});
+		} catch (error: any) {
+			const errMsg = error.response?.data?.message || 'Failed to send message. Please try again.';
+			toast.error(errMsg);
+		} finally {
+			setSending(false);
+		}
 	};
 
 	return (
@@ -237,11 +249,21 @@ const ContactUs = () => {
 
 								<div className="pt-4">
 									<button
+										disabled={sending}
 										onClick={handleSubmit}
-										className="w-full sm:w-auto bg-primary text-white font-semibold rounded-lg px-8 py-4 hover:bg-accent focus:ring-4 focus:ring-primary/30 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group"
+										className="w-full sm:w-auto bg-primary text-white font-semibold rounded-lg px-8 py-4 hover:bg-accent focus:ring-4 focus:ring-primary/30 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group disabled:opacity-50 disabled:cursor-not-allowed"
 									>
-										<span>Send Message</span>
-										<Send className="w-5 h-5" />
+										{sending ? (
+											<>
+												<span>Sending...</span>
+												<div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+											</>
+										) : (
+											<>
+												<span>Send Message</span>
+												<Send className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+											</>
+										)}
 									</button>
 								</div>
 
