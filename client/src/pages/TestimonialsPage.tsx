@@ -16,7 +16,7 @@ const stories = [
 			'The background removal is reliable enough for launch assets and quick enough for daily content production.',
 		name: 'Emil Barsø Rheinlænder',
 		role: 'Content & Marketing Coordinator',
-		company: 'Sony Music',
+		company: 'Avatar Music',
 		image: '/cat2.jpeg',
 		metric: '60% less edit time',
 	},

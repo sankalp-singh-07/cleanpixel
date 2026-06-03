@@ -15,7 +15,7 @@ const testimonials: Testimonial[] = [
     name: "Emil Barsø Rheinlænder",
     role: "Content & Marketing Coordinator",
     image: "/cat1.jpg",
-    company: "Sony Music",
+    company: "Avatar Music",
   },
   {
     text: "Cleanpixel is leaps and bounds ahead of the competition. A thousand times better. It simplified the whole process.",
@@ -36,7 +36,6 @@ const testimonials: Testimonial[] = [
 const Testimonials: React.FC = () => {
   return (
     <section className="relative" style={{ backgroundColor: 'var(--secondary)' }}>
-      {/* Wavy top border */}
       <div className="absolute top-0 left-0 w-full overflow-hidden leading-[0]">
         <svg 
           className="relative block w-full h-[100px] md:h-[120px]" 
