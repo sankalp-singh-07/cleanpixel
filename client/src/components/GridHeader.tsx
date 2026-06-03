@@ -26,7 +26,7 @@ const Tile = ({
 			bg-[#09090b]
 			w-full
 
-			h-[260px]
+			h-[200px]
 			md:h-[320px]
 			lg:h-[280px]
 			flex
@@ -71,19 +71,19 @@ export function GridHeader() {
 					<Tile {...CARDS[1]} />
 				</div>
 
-				<div className="hidden lg:block lg:col-span-3">
+				<div className="hidden md:block md:col-span-6 lg:col-span-3">
 					<Tile {...CARDS[2]} />
 				</div>
 
-				<div className="hidden md:block md:col-span-6 lg:col-span-5">
+				<div className="hidden lg:block lg:col-span-5">
 					<Tile {...CARDS[3]} />
 				</div>
 
-				<div className="hidden md:block md:col-span-6 lg:col-span-2">
+				<div className="hidden lg:block lg:col-span-2">
 					<Tile {...CARDS[4]} />
 				</div>
 
-				<div className="hidden lg:block lg:col-span-5">
+				<div className="hidden md:block md:col-span-6 lg:col-span-5">
 					<Tile {...CARDS[5]} />
 				</div>
 			</div>
